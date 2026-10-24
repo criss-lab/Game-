@@ -13,6 +13,9 @@ required = {
     "Source/ShadowProtocol/SPStreetBlock.cpp": ["RebuildBlock", "AddInstance"],
     "Source/ShadowProtocol/SPDriveableVehicle.cpp": ["CanEnterVehicle", "HasAuthority()"],
     "Source/ShadowProtocol/SPMobileControls.cpp": ["SetMoveStick", "SetLookStick", "PressMelee"],
+    "Source/ShadowProtocol/SPMissionRewards.cpp": ["ESPScene::Debrief", "CompleteMission", "NM_Standalone"],
+    "Source/ShadowProtocol/SPProgressionSubsystem.cpp": ["PurchaseCar", "EquipCar", "RewardedMissions", "STREET_COMPACT", "SPORT_COUPE"],
+    "Source/ShadowProtocol/SPCoinPickup.cpp": ["CollectPickup", "NM_Standalone"],
     "Source/ShadowProtocol/SPProfileSubsystem.cpp": ["SaveGameToSlot", "LoadGameFromSlot", "SetLocalAlias"],
     "Config/DefaultInput.ini": ['ActionName="Melee"', 'AxisName="MoveForward"'],
 }
