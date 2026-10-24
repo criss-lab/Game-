@@ -13,7 +13,7 @@ required = {
     "Source/ShadowProtocol/SPStreetBlock.cpp": ["RebuildBlock", "AddInstance"],
     "Source/ShadowProtocol/SPDriveableVehicle.cpp": ["CanEnterVehicle", "EnterVehicle", "ExitVehicleAuthority", "HasAuthority()"],
     "Source/ShadowProtocol/SPDriveableHelicopter.cpp": ["EnterHelicopter", "ExitHelicopterAuthority", "HelicopterVertical"],
-    "Source/ShadowProtocol/SPWorldMachine.cpp": ["CanInteract", "OnMachineUsed", "ArrowCache", "MedicalStation"],
+    "Source/ShadowProtocol/SPWorldMachine.cpp": ["CanInteract", "OnMachineUsed", "ArrowCache", "MedicalStation", "ESPWorldMachineType::Trailer", "TurretFireInterval", "Tick"],
     "Source/ShadowProtocol/SPArrowProjectile.cpp": ["LaunchInDirection", "ApplyDamage", "OnArrowOverlap"],
     "Source/ShadowProtocol/SPEnvironmentZone.cpp": ["BuildEnvironment", "ESPEnvironmentBiome::Forest", "ESPEnvironmentBiome::Suburb", "AddInstance"],
     "Source/ShadowProtocol/SPMobileControls.cpp": ["SetMoveStick", "SetLookStick", "PressMelee", "PressBlock", "PressSprint", "PressDodge", "PressInteract", "PressArrowFire", "PressExitVehicle"],
