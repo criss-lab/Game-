@@ -16,17 +16,22 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Environment") TObjectPtr<UInstancedStaticMeshComponent> Ground;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Environment") TObjectPtr<UInstancedStaticMeshComponent> PrimaryInstances;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Environment") TObjectPtr<UInstancedStaticMeshComponent> SecondaryInstances;
- UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment") ESPEnvironmentBiome Biome = ESPEnvironmentBiome::City;
- UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment", meta=(ClampMin="500.0")) float Radius = 5000.f;
- UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment", meta=(ClampMin="0", ClampMax="500")) int32 ScatterCount = 100;
- UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment") int32 Seed = 2050;
- UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment") TObjectPtr<UStaticMesh> GroundMesh;
- UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment") TObjectPtr<UStaticMesh> PrimaryMesh;
- UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment") TObjectPtr<UStaticMesh> SecondaryMesh;
+ UPROPERTY(ReplicatedUsing=OnRep_EnvironmentSettings, EditAnywhere, BlueprintReadWrite, Category="Environment") ESPEnvironmentBiome Biome = ESPEnvironmentBiome::City;
+ UPROPERTY(ReplicatedUsing=OnRep_EnvironmentSettings, EditAnywhere, BlueprintReadWrite, Category="Environment", meta=(ClampMin="500.0")) float Radius = 5000.f;
+ UPROPERTY(ReplicatedUsing=OnRep_EnvironmentSettings, EditAnywhere, BlueprintReadWrite, Category="Environment", meta=(ClampMin="0", ClampMax="500")) int32 ScatterCount = 100;
+ UPROPERTY(ReplicatedUsing=OnRep_EnvironmentSettings, EditAnywhere, BlueprintReadWrite, Category="Environment") int32 Seed = 2050;
+ UPROPERTY(ReplicatedUsing=OnRep_EnvironmentSettings, EditAnywhere, BlueprintReadWrite, Category="Environment") TObjectPtr<UStaticMesh> GroundMesh;
+ UPROPERTY(ReplicatedUsing=OnRep_EnvironmentSettings, EditAnywhere, BlueprintReadWrite, Category="Environment") TObjectPtr<UStaticMesh> PrimaryMesh;
+ UPROPERTY(ReplicatedUsing=OnRep_EnvironmentSettings, EditAnywhere, BlueprintReadWrite, Category="Environment") TObjectPtr<UStaticMesh> SecondaryMesh;
  UPROPERTY() TObjectPtr<UStaticMesh> FallbackPlaneMesh;
  UPROPERTY() TObjectPtr<UStaticMesh> FallbackCubeMesh;
  UPROPERTY() TObjectPtr<UStaticMesh> FallbackSphereMesh;
  UPROPERTY() TObjectPtr<UStaticMesh> FallbackConeMesh;
  UPROPERTY() TObjectPtr<UStaticMesh> FallbackCylinderMesh;
  UFUNCTION(CallInEditor, BlueprintCallable, Category="Environment") void BuildEnvironment();
+ virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+protected:
+ virtual void BeginPlay() override;
+private:
+ UFUNCTION() void OnRep_EnvironmentSettings();
 };
