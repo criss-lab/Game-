@@ -74,6 +74,7 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
   }
  }
  if (VehicleClass) GetWorld()->SpawnActor<ASPDriveableVehicle>(VehicleClass, GetActorTransform().TransformPosition(VehiclePosition), GetActorRotation());
+ if (HelicopterClass) GetWorld()->SpawnActor<ASPDriveableHelicopter>(HelicopterClass, GetActorTransform().TransformPosition(HelicopterPosition), GetActorRotation());
  if (ObjectiveClass && Director)
  {
   ASPMissionObjective* Objective = GetWorld()->SpawnActor<ASPMissionObjective>(ObjectiveClass, GetActorTransform().TransformPosition(FirstObjectivePosition), GetActorRotation());
