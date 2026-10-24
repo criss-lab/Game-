@@ -1,5 +1,6 @@
 #include "SPProgressionSubsystem.h"
 #include "SPOfflineSave.h"
+#include "SPIdentityComponent.h"
 #include "Kismet/GameplayStatics.h"
 const FString USPProgressionSubsystem::Slot(TEXT("ShadowProtocolProgressV2"));
 USPProgressionSubsystem::USPProgressionSubsystem()
@@ -26,13 +27,40 @@ USPOfflineSave* USPProgressionSubsystem::EnsureData()
 }
 bool USPProgressionSubsystem::LoadProgress()
 {
- if (!UGameplayStatics::DoesSaveGameExist(Slot, 0)) return EnsureData() != nullptr;
+ if (!UGameplayStatics::DoesSaveGameExist(Slot, 0))
+ {
+  if (!EnsureData()) return false;
+  const FString LegacySlot(TEXT("ShadowProtocolLocalV1"));
+  if (UGameplayStatics::DoesSaveGameExist(LegacySlot, 0))
+  {
+   USPOfflineSave* Legacy = Cast<USPOfflineSave>(UGameplayStatics::LoadGameFromSlot(LegacySlot, 0));
+   if (Legacy && Legacy->SaveVersion == 1)
+   {
+    Data->LocalAlias = USPIdentityComponent::IsValidAlias(Legacy->LocalAlias) ? Legacy->LocalAlias : TEXT("Ghost-0001");
+    Data->CompletedMissions = FMath::Max(0, Legacy->CompletedMissions);
+    Data->UnlockedMission = FMath::Max(1, Legacy->UnlockedMission);
+    // Historical completion is migrated without retroactively granting currency or XP.
+    for (int32 Mission = 1; Mission <= FMath::Min(Data->CompletedMissions, 1000); ++Mission) Data->RewardedMissions.AddUnique(Mission);
+   }
+  }
+  return Commit();
+ }
  USPOfflineSave* Loaded = Cast<USPOfflineSave>(UGameplayStatics::LoadGameFromSlot(Slot, 0));
  if (!Loaded || Loaded->SaveVersion != 2) return false;
  Data = Loaded;
  OnProgressionUpdated.Broadcast();
  return true;
 }
+bool USPProgressionSubsystem::SetAlias(const FString& Alias)
+{
+ if (!USPIdentityComponent::IsValidAlias(Alias) || !EnsureData()) return false;
+ const FString Previous = Data->LocalAlias;
+ Data->LocalAlias = Alias.TrimStartAndEnd();
+ if (Commit()) return true;
+ Data->LocalAlias = Previous;
+ return false;
+}
+FString USPProgressionSubsystem::GetAlias() const { return Data ? Data->LocalAlias : FString(TEXT("Ghost-0001")); }
 bool USPProgressionSubsystem::Commit()
 {
  if (!EnsureData() || !UGameplayStatics::SaveGameToSlot(Data, Slot, 0)) return false;
