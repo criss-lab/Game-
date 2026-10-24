@@ -1,6 +1,8 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "SPEnvironmentZone.h"
+#include "SPWorldMachine.h"
 #include "SPMissionBootstrap.generated.h"
 class ASPStreetBlock;
 class ASPCombatCharacter;
@@ -19,6 +21,13 @@ public:
  UPROPERTY(EditAnywhere, Category="Mission") TSubclassOf<ASPCombatAIController> EnemyControllerClass;
  UPROPERTY(EditAnywhere, Category="Mission") TSubclassOf<ASPDriveableVehicle> VehicleClass;
  UPROPERTY(EditAnywhere, Category="Mission") TSubclassOf<ASPMissionObjective> ObjectiveClass;
+ UPROPERTY(EditAnywhere, Category="Environment") TSubclassOf<ASPEnvironmentZone> EnvironmentClass;
+ UPROPERTY(EditAnywhere, Category="Environment") ESPEnvironmentBiome EnvironmentBiome = ESPEnvironmentBiome::City;
+ UPROPERTY(EditAnywhere, Category="Environment") FVector EnvironmentOffset = FVector(0.f, 0.f, 0.f);
+ UPROPERTY(EditAnywhere, Category="Environment", meta=(ClampMin="0", ClampMax="12")) int32 MachineCount = 3;
+ UPROPERTY(EditAnywhere, Category="Environment") TSubclassOf<ASPWorldMachine> WorldMachineClass;
+ UPROPERTY(EditAnywhere, Category="Environment") TArray<ESPWorldMachineType> MissionMachineTypes = { ESPWorldMachineType::SecurityConsole, ESPWorldMachineType::CombatTurret, ESPWorldMachineType::ArrowCache };
+ UPROPERTY(EditAnywhere, Category="Environment") FVector MachineStart = FVector(850.f, 600.f, 50.f);
  UPROPERTY(EditAnywhere, Category="Mission") int32 EnemyCount = 3;
  UPROPERTY(EditAnywhere, Category="Mission") FVector StreetOffset = FVector::ZeroVector;
  UPROPERTY(EditAnywhere, Category="Mission") FVector EnemyStart = FVector(1200.f, 300.f, 120.f);
