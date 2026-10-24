@@ -3,6 +3,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "SPCombatCharacter.h"
 ASPArrowProjectile::ASPArrowProjectile()
 {
  PrimaryActorTick.bCanEverTick = false;
@@ -31,6 +32,7 @@ void ASPArrowProjectile::BeginPlay()
 {
  Super::BeginPlay();
  Collision->OnComponentBeginOverlap.AddDynamic(this, &ASPArrowProjectile::OnArrowOverlap);
+ Collision->OnComponentHit.AddDynamic(this, &ASPArrowProjectile::OnArrowHit);
 }
 void ASPArrowProjectile::LaunchInDirection(FVector Direction)
 {
@@ -40,6 +42,13 @@ void ASPArrowProjectile::LaunchInDirection(FVector Direction)
 void ASPArrowProjectile::OnArrowOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
  if (!HasAuthority() || !IsValid(OtherActor) || OtherActor == GetOwner() || OtherActor == this) return;
+ const ASPCombatCharacter* Shooter = Cast<ASPCombatCharacter>(GetOwner());
+ const ASPCombatCharacter* Target = Cast<ASPCombatCharacter>(OtherActor);
+ if (Shooter && Target && Shooter->GetCombatTeam() != ESPTeam::Unassigned && Shooter->GetCombatTeam() == Target->GetCombatTeam()) { Destroy(); return; }
  UGameplayStatics::ApplyDamage(OtherActor, FMath::Max(0.f, Damage), GetInstigatorController(), this, UDamageType::StaticClass());
  Destroy();
+}
+void ASPArrowProjectile::OnArrowHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+ if (HasAuthority() && OtherActor != GetOwner()) Destroy();
 }
