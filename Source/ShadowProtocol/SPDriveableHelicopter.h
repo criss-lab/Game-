@@ -12,6 +12,7 @@ class SHADOWPROTOCOL_API ASPDriveableHelicopter : public APawn
  GENERATED_BODY()
 public:
  ASPDriveableHelicopter();
+ virtual void Tick(float DeltaSeconds) override;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Helicopter") TObjectPtr<UStaticMeshComponent> HelicopterMesh;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Helicopter") TObjectPtr<USpringArmComponent> CameraBoom;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Helicopter") TObjectPtr<UCameraComponent> PilotCamera;
@@ -37,4 +38,5 @@ private:
  UFUNCTION(Server, Unreliable) void ServerMoveFlight(FVector Direction, float Scale);
  UFUNCTION(Server, Unreliable) void ServerMobileMove(FVector2D Axis);
  void ExitHelicopterAuthority();
+ float MobileVerticalInput = 0.f;
 };
