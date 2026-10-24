@@ -85,8 +85,11 @@ void ASPCombatCharacter::ExecuteInteraction()
  // Fallback lets players activate a nearby machine even when its mesh has no collision.
  TArray<FOverlapResult> Nearby;
  FCollisionQueryParams OverlapParams(SCENE_QUERY_STAT(SPNearbyMachine), false, this);
+ FCollisionObjectQueryParams ObjectTypes;
+ ObjectTypes.AddObjectTypesToQuery(ECC_WorldStatic);
+ ObjectTypes.AddObjectTypesToQuery(ECC_WorldDynamic);
  GetWorld()->OverlapMultiByObjectType(Nearby, GetActorLocation(), FQuat::Identity,
-  FCollisionObjectQueryParams(ECC_WorldDynamic), FCollisionShape::MakeSphere(220.f), OverlapParams);
+  ObjectTypes, FCollisionShape::MakeSphere(220.f), OverlapParams);
  ASPWorldMachine* Best = nullptr;
  float BestDistance = TNumericLimits<float>::Max();
  for (const FOverlapResult& Result : Nearby)
