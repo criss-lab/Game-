@@ -52,8 +52,10 @@ void ASPDriveableHelicopter::TiltPitch(float V) { if (Controller) AddControllerP
 void ASPDriveableHelicopter::MobileMove(FVector2D Axis)
 {
  Axis = Axis.GetClampedToMaxSize(1.f);
- MoveForward(Axis.Y);
- MoveRight(Axis.X);
+ if (!Controller) return;
+ AddMovementInput(GetActorForwardVector(), Axis.Y);
+ AddMovementInput(GetActorRightVector(), Axis.X);
+ if (!HasAuthority()) ServerMobileMove(Axis);
 }
 void ASPDriveableHelicopter::MobileLook(FVector2D Axis)
 {
