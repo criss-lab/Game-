@@ -11,12 +11,12 @@ required = {
     "Source/ShadowProtocol/SPMissionObjective.cpp": ["HasAuthority()", "AdvanceScene", "DOREPLIFETIME"],
     "Source/ShadowProtocol/SPMissionBootstrap.cpp": ["HasAuthority()", "bSpawned", "BotTeam", "EnvironmentClass", "WorldMachineClass", "SpawnActor<ASPStreetBlock>", "SpawnActor<ASPDriveableVehicle>", "SpawnActor<ASPDriveableHelicopter>", "SpawnActor<ASPMissionObjective>"],
     "Source/ShadowProtocol/SPStreetBlock.cpp": ["RebuildBlock", "AddInstance"],
-    "Source/ShadowProtocol/SPDriveableVehicle.cpp": ["CanEnterVehicle", "EnterVehicle", "ExitVehicleAuthority", "HasAuthority()"],
-    "Source/ShadowProtocol/SPDriveableHelicopter.cpp": ["EnterHelicopter", "ExitHelicopterAuthority", "HelicopterVertical", "BodyMesh"],
-    "Source/ShadowProtocol/SPWorldMachine.cpp": ["CanInteract", "OnMachineUsed", "OnMachineStateChanged", "ArrowCache", "MedicalStation", "ESPWorldMachineType::Trailer", "TurretFireInterval", "Tick"],
+    "Source/ShadowProtocol/SPDriveableVehicle.cpp": ["CanEnterVehicle", "EnterVehicle", "ExitVehicleAuthority", "SetThrottleInput", "SetSteeringInput", "ServerSetDriveInput", "SetVehicleBrake"],
+    "Source/ShadowProtocol/SPDriveableHelicopter.cpp": ["EnterHelicopter", "ExitHelicopterAuthority", "HelicopterVertical", "BodyMesh", "ServerMoveFlight", "ServerMobileMove"],
+    "Source/ShadowProtocol/SPWorldMachine.cpp": ["CanInteract", "OnMachineUsed", "OnMachineStateChanged", "ArrowCache", "MedicalStation", "ESPWorldMachineType::Trailer", "TurretFireInterval", "DOREPLIFETIME(ASPWorldMachine, MachineType)", "Tick"],
     "Source/ShadowProtocol/SPArrowProjectile.cpp": ["LaunchInDirection", "ApplyDamage", "OnArrowOverlap", "ArrowAsset"],
-    "Source/ShadowProtocol/SPEnvironmentZone.cpp": ["BuildEnvironment", "ESPEnvironmentBiome::Forest", "ESPEnvironmentBiome::Suburb", "FallbackConeMesh", "AddInstance"],
-    "Source/ShadowProtocol/SPMobileControls.cpp": ["SetMoveStick", "SetLookStick", "PressMelee", "PressBlock", "PressSprint", "PressDodge", "PressInteract", "PressArrowFire", "PressExitVehicle"],
+    "Source/ShadowProtocol/SPEnvironmentZone.cpp": ["BuildEnvironment", "ESPEnvironmentBiome::Forest", "ESPEnvironmentBiome::Suburb", "FallbackConeMesh", "DOREPLIFETIME(ASPEnvironmentZone, Biome)", "AddInstance"],
+    "Source/ShadowProtocol/SPMobileControls.cpp": ["SetMoveStick", "SetLookStick", "PressMelee", "PressBlock", "PressSprint", "PressDodge", "PressInteract", "PressArrowFire", "PressExitVehicle", "SetMobileDriveInput", "PressBrake"],
     "Source/ShadowProtocol/SPCharacter.cpp": ["StartSprint", "StopSprint", "ToggleCrouch", "Dodge", "ServerSetSprinting", "DOREPLIFETIME"],
     "Source/ShadowProtocol/SPCombatCharacter.cpp": ["SweepMultiByChannel", "AttackConeDot", "SPMeleeLOS", "ServerSetBlocking"],
     "Source/ShadowProtocol/SPMissionRewards.cpp": ["ESPScene::Debrief", "CompleteMission", "NM_Standalone"],
@@ -26,7 +26,7 @@ required = {
     "Source/ShadowProtocol/SPProgressionWidget.cpp": ["OnProgressionUpdated", "BuyCar", "SelectCar"],
     "Source/ShadowProtocol/SPGarageSpawner.cpp": ["GetEquippedCar", "OwnsCar", "SpawnActor<ASPDriveableVehicle>"],
     "Source/ShadowProtocol/SPThrillerPresentation.cpp": ["THE BLACK CONVOY", "THE ENFORCER", "LAST EXIT", "PresentBeat"],
-    "Config/DefaultInput.ini": ['ActionName="Melee"', 'ActionName="Interact"', 'ActionName="ArrowFire"', 'ActionName="ExitVehicle"', 'AxisName="MoveForward"'],
+    "Config/DefaultInput.ini": ['ActionName="Melee"', 'ActionName="Interact"', 'ActionName="ArrowFire"', 'ActionName="ExitVehicle"', 'ActionName="Brake"', 'ActionName="Handbrake"', 'AxisName="VehicleThrottle"', 'AxisName="VehicleSteering"', 'AxisName="MoveForward"'],
 }
 errors = []
 for relative, markers in required.items():
