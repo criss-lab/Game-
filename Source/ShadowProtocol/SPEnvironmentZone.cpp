@@ -3,9 +3,11 @@
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Net/UnrealNetwork.h"
 ASPEnvironmentZone::ASPEnvironmentZone()
 {
  PrimaryActorTick.bCanEverTick = false;
+ bReplicates = true;
  SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
  SetRootComponent(SceneRoot);
  Ground = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Ground"));
@@ -24,6 +26,23 @@ ASPEnvironmentZone::ASPEnvironmentZone()
  if (SphereAsset.Succeeded()) FallbackSphereMesh = SphereAsset.Object;
  if (ConeAsset.Succeeded()) FallbackConeMesh = ConeAsset.Object;
  if (CylinderAsset.Succeeded()) FallbackCylinderMesh = CylinderAsset.Object;
+}
+void ASPEnvironmentZone::BeginPlay()
+{
+ Super::BeginPlay();
+ BuildEnvironment();
+}
+void ASPEnvironmentZone::OnRep_EnvironmentSettings() { BuildEnvironment(); }
+void ASPEnvironmentZone::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+ Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+ DOREPLIFETIME(ASPEnvironmentZone, Biome);
+ DOREPLIFETIME(ASPEnvironmentZone, Radius);
+ DOREPLIFETIME(ASPEnvironmentZone, ScatterCount);
+ DOREPLIFETIME(ASPEnvironmentZone, Seed);
+ DOREPLIFETIME(ASPEnvironmentZone, GroundMesh);
+ DOREPLIFETIME(ASPEnvironmentZone, PrimaryMesh);
+ DOREPLIFETIME(ASPEnvironmentZone, SecondaryMesh);
 }
 void ASPEnvironmentZone::BuildEnvironment()
 {
