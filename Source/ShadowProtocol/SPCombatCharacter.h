@@ -19,10 +19,14 @@ public:
  UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(ClampMin="0.0", ClampMax="1.0")) float AttackConeDot = 0.25f;
  UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(ClampMin="0.0")) float AttackRadius = 48.f;
  virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+ virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+ UPROPERTY(Replicated, BlueprintReadOnly, Category="Combat") bool bBlocking = false;
+ UFUNCTION(BlueprintCallable, Category="Combat") void StartBlock();
+ UFUNCTION(BlueprintCallable, Category="Combat") void StopBlock();
  UFUNCTION(BlueprintCallable, Category="Combat") void RequestMeleeAttack();
  UFUNCTION(BlueprintImplementableEvent, Category="Combat") void OnAttackPerformed();
 private:
- UFUNCTION(Server, Reliable) void ServerMeleeAttack();
+ UFUNCTION(Server, Reliable) void ServerMeleeAttack();\n UFUNCTION(Server, Reliable) void ServerSetBlocking(bool bNewBlocking);
  UFUNCTION(NetMulticast, Unreliable) void MulticastAttackPerformed();
  void ExecuteMeleeAttack();
  double LastAttackTime = -1000.0;
