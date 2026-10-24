@@ -1,0 +1,11 @@
+name: Source sanity
+on:
+  push:
+  pull_request:
+jobs:
+  source-sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check source structure and gameplay wiring
+        run: python3 scripts/check_source.py

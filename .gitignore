@@ -1,0 +1,12 @@
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+*.sln
+*.log
+*.apk
+*.aab
+*.keystore
+*.jks
+.env
