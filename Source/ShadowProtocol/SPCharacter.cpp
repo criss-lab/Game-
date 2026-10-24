@@ -43,3 +43,17 @@ void ASPCharacter::LookYaw(float Value) { AddControllerYawInput(Value); }
 void ASPCharacter::LookPitch(float Value) { AddControllerPitchInput(Value); }
 void ASPCharacter::StartJump() { Jump(); }
 void ASPCharacter::StopJumpingInput() { StopJumping(); }
+void ASPCharacter::MobileMove(FVector2D Axis)
+{
+ if (!IsLocallyControlled()) return;
+ Axis = Axis.GetClampedToMaxSize(1.f);
+ MoveForward(Axis.Y);
+ MoveRight(Axis.X);
+}
+void ASPCharacter::MobileLook(FVector2D Axis)
+{
+ if (!IsLocallyControlled()) return;
+ Axis = Axis.GetClampedToMaxSize(1.f);
+ LookYaw(Axis.X);
+ LookPitch(Axis.Y);
+}
