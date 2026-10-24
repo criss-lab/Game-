@@ -4,6 +4,7 @@
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Controller.h"
+#include "Net/UnrealNetwork.h"
 ASPCombatCharacter::ASPCombatCharacter()
 {
  bReplicates = true;
@@ -18,6 +19,20 @@ void ASPCombatCharacter::SetupPlayerInputComponent(UInputComponent* Input)
 {
  Super::SetupPlayerInputComponent(Input);
  Input->BindAction(TEXT("Melee"), IE_Pressed, this, &ASPCombatCharacter::RequestMeleeAttack);
+ Input->BindAction(TEXT("Block"), IE_Pressed, this, &ASPCombatCharacter::StartBlock);
+ Input->BindAction(TEXT("Block"), IE_Released, this, &ASPCombatCharacter::StopBlock);
+}
+void ASPCombatCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+ Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+ DOREPLIFETIME(ASPCombatCharacter, bBlocking);
+}
+void ASPCombatCharacter::StartBlock() { if (HasAuthority()) bBlocking = true; else ServerSetBlocking(true); }
+void ASPCombatCharacter::StopBlock() { if (HasAuthority()) bBlocking = false; else ServerSetBlocking(false); }
+void ASPCombatCharacter::ServerSetBlocking_Implementation(bool bNewBlocking)
+{
+ if (!HealthComponent || !HealthComponent->IsAlive()) { bBlocking = false; return; }
+ bBlocking = bNewBlocking;
 }
 void ASPCombatCharacter::RequestMeleeAttack()
 {
