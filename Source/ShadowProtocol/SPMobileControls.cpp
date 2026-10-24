@@ -1,5 +1,7 @@
 #include "SPMobileControls.h"
 #include "SPCombatCharacter.h"
+#include "SPDriveableVehicle.h"
+#include "SPDriveableHelicopter.h"
 ASPCombatCharacter* USPMobileControls::LocalCharacter() const
 {
  return Cast<ASPCombatCharacter>(GetOwningPlayerPawn());
@@ -31,4 +33,11 @@ void USPMobileControls::SetMoveStick(FVector2D Axis)
 void USPMobileControls::SetLookStick(FVector2D Axis)
 {
  if (ASPCombatCharacter* Character = LocalCharacter()) Character->MobileLook(Axis);
+}
+
+void USPMobileControls::PressExitVehicle()
+{
+ APawn* Pawn = GetOwningPlayerPawn();
+ if (ASPDriveableVehicle* Vehicle = Cast<ASPDriveableVehicle>(Pawn)) Vehicle->ExitVehicle();
+ else if (ASPDriveableHelicopter* Helicopter = Cast<ASPDriveableHelicopter>(Pawn)) Helicopter->ExitHelicopter();
 }
