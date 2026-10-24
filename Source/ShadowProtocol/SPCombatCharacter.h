@@ -15,7 +15,9 @@ public:
  UFUNCTION(BlueprintPure, Category="Combat") ESPTeam GetCombatTeam() const;
  UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(ClampMin="0.0", ClampMax="300.0")) float AttackRange = 180.f;
  UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(ClampMin="0.0", ClampMax="100.0")) float AttackDamage = 20.f;
- UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(ClampMin="0.1")) float AttackCooldown = 0.7f;
+ UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(ClampMin="0.1")) float AttackCooldown = 0.55f;
+ UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(ClampMin="0.0", ClampMax="1.0")) float AttackConeDot = 0.25f;
+ UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(ClampMin="0.0")) float AttackRadius = 48.f;
  virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
  UFUNCTION(BlueprintCallable, Category="Combat") void RequestMeleeAttack();
  UFUNCTION(BlueprintImplementableEvent, Category="Combat") void OnAttackPerformed();
