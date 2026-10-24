@@ -4,8 +4,11 @@ USPHealthComponent::USPHealthComponent() { SetIsReplicatedByDefault(true); Prima
 void USPHealthComponent::BeginPlay()
 {
  Super::BeginPlay();
- Health = FMath::Clamp(Health, 0.f, MaxHealth);
- if (GetOwner() && GetOwner()->HasAuthority()) GetOwner()->OnTakeAnyDamage.AddDynamic(this, &USPHealthComponent::HandleAnyDamage);
+ if (GetOwner() && GetOwner()->HasAuthority())
+ {
+  Health = FMath::Max(0.f, MaxHealth);
+  GetOwner()->OnTakeAnyDamage.AddDynamic(this, &USPHealthComponent::HandleAnyDamage);
+ }
  OnRep_Health();
 }
 void USPHealthComponent::HandleAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
