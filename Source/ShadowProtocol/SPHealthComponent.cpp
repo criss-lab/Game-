@@ -1,5 +1,6 @@
 #include "SPHealthComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "SPCombatCharacter.h"
 USPHealthComponent::USPHealthComponent() { SetIsReplicatedByDefault(true); PrimaryComponentTick.bCanEverTick = false; }
 void USPHealthComponent::BeginPlay()
 {
