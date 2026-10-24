@@ -48,3 +48,20 @@ void ASPDriveableHelicopter::MoveRight(float V) { if (Controller) AddMovementInp
 void ASPDriveableHelicopter::MoveVertical(float V) { if (Controller) AddMovementInput(FVector::UpVector,V); }
 void ASPDriveableHelicopter::TurnYaw(float V) { if (Controller) AddControllerYawInput(V); }
 void ASPDriveableHelicopter::TiltPitch(float V) { if (Controller) AddControllerPitchInput(V); }
+
+void ASPDriveableHelicopter::MobileMove(FVector2D Axis)
+{
+ Axis = Axis.GetClampedToMaxSize(1.f);
+ MoveForward(Axis.Y);
+ MoveRight(Axis.X);
+}
+void ASPDriveableHelicopter::MobileLook(FVector2D Axis)
+{
+ Axis = Axis.GetClampedToMaxSize(1.f);
+ TurnYaw(Axis.X);
+ TiltPitch(Axis.Y);
+}
+void ASPDriveableHelicopter::MobileVertical(float Value)
+{
+ MoveVertical(FMath::Clamp(Value, -1.f, 1.f));
+}
