@@ -28,11 +28,18 @@ void USPMobileControls::PressDodge() { if (ASPCombatCharacter* C = LocalCharacte
 void USPMobileControls::ToggleCrouch() { if (ASPCombatCharacter* C = LocalCharacter()) C->ToggleCrouch(); }
 void USPMobileControls::SetMoveStick(FVector2D Axis)
 {
- if (ASPCombatCharacter* Character = LocalCharacter()) Character->MobileMove(Axis);
+ Axis = Axis.GetClampedToMaxSize(1.f);
+ APawn* Pawn = GetOwningPlayerPawn();
+ if (ASPCombatCharacter* Character = Cast<ASPCombatCharacter>(Pawn)) Character->MobileMove(Axis);
+ else if (ASPDriveableVehicle* Vehicle = Cast<ASPDriveableVehicle>(Pawn)) Vehicle->SetMobileDriveInput(Axis);
+ else if (ASPDriveableHelicopter* Helicopter = Cast<ASPDriveableHelicopter>(Pawn)) Helicopter->MobileMove(Axis);
 }
 void USPMobileControls::SetLookStick(FVector2D Axis)
 {
- if (ASPCombatCharacter* Character = LocalCharacter()) Character->MobileLook(Axis);
+ Axis = Axis.GetClampedToMaxSize(1.f);
+ APawn* Pawn = GetOwningPlayerPawn();
+ if (ASPCombatCharacter* Character = Cast<ASPCombatCharacter>(Pawn)) Character->MobileLook(Axis);
+ else if (ASPDriveableHelicopter* Helicopter = Cast<ASPDriveableHelicopter>(Pawn)) Helicopter->MobileLook(Axis);
 }
 
 void USPMobileControls::PressExitVehicle()
