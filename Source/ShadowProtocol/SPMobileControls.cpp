@@ -16,6 +16,12 @@ void USPMobileControls::ReleaseJump()
 {
  if (ASPCombatCharacter* Character = LocalCharacter()) Character->StopJumping();
 }
+void USPMobileControls::PressBlock() { if (ASPCombatCharacter* C = LocalCharacter()) C->StartBlock(); }
+void USPMobileControls::ReleaseBlock() { if (ASPCombatCharacter* C = LocalCharacter()) C->StopBlock(); }
+void USPMobileControls::PressSprint() { if (ASPCombatCharacter* C = LocalCharacter()) C->StartSprint(); }
+void USPMobileControls::ReleaseSprint() { if (ASPCombatCharacter* C = LocalCharacter()) C->StopSprint(); }
+void USPMobileControls::PressDodge() { if (ASPCombatCharacter* C = LocalCharacter()) C->Dodge(); }
+void USPMobileControls::ToggleCrouch() { if (ASPCombatCharacter* C = LocalCharacter()) C->ToggleCrouch(); }
 void USPMobileControls::SetMoveStick(FVector2D Axis)
 {
  if (ASPCombatCharacter* Character = LocalCharacter()) Character->MobileMove(Axis);
