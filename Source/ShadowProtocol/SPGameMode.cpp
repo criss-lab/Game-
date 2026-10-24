@@ -1,3 +1,3 @@
 #include "SPGameMode.h"
-#include "SPCharacter.h"
-ASPGameMode::ASPGameMode() { DefaultPawnClass = ASPCharacter::StaticClass(); }
+#include "SPCombatCharacter.h"
+ASPGameMode::ASPGameMode() { DefaultPawnClass = ASPCombatCharacter::StaticClass(); }
