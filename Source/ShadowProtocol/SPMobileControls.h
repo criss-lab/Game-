@@ -12,6 +12,10 @@ public:
  UFUNCTION(BlueprintCallable, Category="Mobile") void PressInteract();
  UFUNCTION(BlueprintCallable, Category="Mobile") void PressArrowFire();
  UFUNCTION(BlueprintCallable, Category="Mobile") void PressExitVehicle();
+ UFUNCTION(BlueprintCallable, Category="Mobile") void PressBrake();
+ UFUNCTION(BlueprintCallable, Category="Mobile") void ReleaseBrake();
+ UFUNCTION(BlueprintCallable, Category="Mobile") void PressHandbrake();
+ UFUNCTION(BlueprintCallable, Category="Mobile") void ReleaseHandbrake();
  UFUNCTION(BlueprintCallable, Category="Mobile") void PressJump();
  UFUNCTION(BlueprintCallable, Category="Mobile") void ReleaseJump();
  UFUNCTION(BlueprintCallable, Category="Mobile") void PressBlock();
