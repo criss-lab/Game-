@@ -1,7 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "SPOfflineSave.h"
 #include "SPProfileSubsystem.generated.h"
 UCLASS()
 class SHADOWPROTOCOL_API USPProfileSubsystem : public UGameInstanceSubsystem
@@ -14,8 +13,4 @@ public:
  UFUNCTION(BlueprintPure, Category="Profile") FString GetLocalAlias() const;
  UFUNCTION(BlueprintCallable, Category="Profile") void RecordMissionCompleted(int32 MissionNumber);
  UFUNCTION(BlueprintPure, Category="Profile") int32 GetUnlockedMission() const;
-private:
- UPROPERTY(Transient) TObjectPtr<USPOfflineSave> Profile;
- USPOfflineSave* EnsureProfile();
- static const FString SlotName;
 };
