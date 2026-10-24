@@ -36,6 +36,7 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
    ASPCombatCharacter* Enemy = GetWorld()->SpawnActor<ASPCombatCharacter>(EnemyClass, Position, GetActorRotation());
    if (Enemy)
    {
+    Enemy->BotTeam = ESPTeam::Thieves;
     const TSubclassOf<ASPCombatAIController> ControllerType = EnemyControllerClass ? EnemyControllerClass : ASPCombatAIController::StaticClass();
     ASPCombatAIController* AI = GetWorld()->SpawnActor<ASPCombatAIController>(ControllerType, Position, GetActorRotation());
     if (AI) AI->Possess(Enemy);
