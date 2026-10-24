@@ -9,7 +9,7 @@ required = {
     "Source/ShadowProtocol/SPHealthComponent.cpp": ["DOREPLIFETIME", "HasAuthority()", "OnTakeAnyDamage"],
     "Source/ShadowProtocol/SPCombatAIController.cpp": ["TActorIterator", "GetCombatTeam()", "RequestMeleeAttack"],
     "Source/ShadowProtocol/SPMissionObjective.cpp": ["HasAuthority()", "AdvanceScene", "DOREPLIFETIME"],
-    "Source/ShadowProtocol/SPMissionBootstrap.cpp": ["HasAuthority()", "bSpawned", "BotTeam", "EnvironmentClass", "WorldMachineClass", "SpawnActor<ASPStreetBlock>", "SpawnActor<ASPDriveableVehicle>", "SpawnActor<ASPMissionObjective>"],
+    "Source/ShadowProtocol/SPMissionBootstrap.cpp": ["HasAuthority()", "bSpawned", "BotTeam", "EnvironmentClass", "WorldMachineClass", "SpawnActor<ASPStreetBlock>", "SpawnActor<ASPDriveableVehicle>", "SpawnActor<ASPDriveableHelicopter>", "SpawnActor<ASPMissionObjective>"],
     "Source/ShadowProtocol/SPStreetBlock.cpp": ["RebuildBlock", "AddInstance"],
     "Source/ShadowProtocol/SPDriveableVehicle.cpp": ["CanEnterVehicle", "EnterVehicle", "ExitVehicleAuthority", "HasAuthority()"],
     "Source/ShadowProtocol/SPDriveableHelicopter.cpp": ["EnterHelicopter", "ExitHelicopterAuthority", "HelicopterVertical"],
