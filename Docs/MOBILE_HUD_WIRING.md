@@ -1,0 +1,5 @@
+# Mobile controls Blueprint integration
+
+Create WBP_MobileControls with parent SPMobileControls. On mobile local player, add it to viewport and respect Safe Zone. Add move and look virtual sticks, jump and melee buttons. Send normalized move stick vector to SetMoveStick every frame while held; send (0,0) on release. Send look stick vector to SetLookStick every frame while held and zero on release. One-off calls do not sustain movement because AddMovementInput is frame-based. Bind jump Pressed/Released and melee Pressed. Avoid ticking or displaying this widget on dedicated servers or for remote pawns. Use mobile preview and real device to validate joystick orientation, touch capture and simultaneous multitouch.
+
+Profile subsystem: call LoadLocalProfile during menu initialization. SetLocalAlias validates and saves a local alias; RecordMissionCompleted saves progress. These local fields are not an online identity or anti-cheat mechanism. Verify save upgrade and corrupted save recovery before shipping.
