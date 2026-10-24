@@ -4,6 +4,8 @@
 #include "Net/UnrealNetwork.h"
 #include "SPCombatCharacter.h"
 #include "SPHealthComponent.h"
+#include "SPDriveableVehicle.h"
+#include "Kismet/GameplayStatics.h"
 ASPWorldMachine::ASPWorldMachine()
 {
  PrimaryActorTick.bCanEverTick = false;
@@ -32,6 +34,21 @@ bool ASPWorldMachine::CanInteract(AActor* User) const
 void ASPWorldMachine::Interact(AActor* User)
 {
  if (!CanInteract(User)) return;
+ if (MachineType == ESPWorldMachineType::Trailer)
+ {
+  TArray<AActor*> Vehicles;
+  UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASPDriveableVehicle::StaticClass(), Vehicles);
+  ASPDriveableVehicle* Nearest = nullptr;
+  float BestDistance = FMath::Square(700.f);
+  for (AActor* Candidate : Vehicles)
+  {
+   const float Distance = FVector::DistSquared(GetActorLocation(), Candidate->GetActorLocation());
+   if (Distance < BestDistance) { BestDistance = Distance; Nearest = Cast<ASPDriveableVehicle>(Candidate); }
+  }
+  if (!bActivated && !Nearest) return;
+  if (bActivated) DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+  else { AttachToActor(Nearest, FAttachmentTransformRules::KeepWorldTransform); SetActorRelativeLocation(FVector(-350.f,0.f,0.f)); }
+ }
  LastUseTime = GetWorld()->GetTimeSeconds();
  if (ASPCombatCharacter* Character = Cast<ASPCombatCharacter>(User))
  {
