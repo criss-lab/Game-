@@ -11,6 +11,7 @@ class SHADOWPROTOCOL_API USPProgressionSubsystem : public UGameInstanceSubsystem
  GENERATED_BODY()
 public:
  USPProgressionSubsystem();
+ virtual void Initialize(FSubsystemCollectionBase& Collection) override;
  UPROPERTY(BlueprintAssignable, Category="Progression") FSPProgressionUpdated OnProgressionUpdated;
  UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Garage") TArray<FSPCarOffer> CarCatalog;
  UFUNCTION(BlueprintCallable, Category="Progression") bool LoadProgress();
