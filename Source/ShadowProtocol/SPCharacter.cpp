@@ -92,6 +92,16 @@ void ASPCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
  Super::GetLifetimeReplicatedProps(OutLifetimeProps);
  DOREPLIFETIME(ASPCharacter, bSprinting);
 }
+void ASPCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+{
+ Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
+ if (GetCharacterMovement()) GetCharacterMovement()->MaxWalkSpeed = WalkSpeed * 0.55f;
+}
+void ASPCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+{
+ Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
+ if (GetCharacterMovement()) GetCharacterMovement()->MaxWalkSpeed = bSprinting ? SprintSpeed : WalkSpeed;
+}
 void ASPCharacter::ToggleCrouch()
 {
  if (bIsCrouched)
