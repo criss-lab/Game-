@@ -2,7 +2,6 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Net/UnrealNetwork.h"
-
 ASPWorldMachine::ASPWorldMachine()
 {
  PrimaryActorTick.bCanEverTick = false;
@@ -23,11 +22,10 @@ ASPWorldMachine::ASPWorldMachine()
 }
 bool ASPWorldMachine::CanInteract(AActor* User) const
 {
- if (!HasAuthority() || !IsValid(User) || User == this || !InteractionRadius) return false;
+ if (!HasAuthority() || !IsValid(User) || User == this || !InteractionRadius || !GetWorld()) return false;
  if (FVector::DistSquared(User->GetActorLocation(), GetActorLocation()) > FMath::Square(InteractionRadius->GetScaledSphereRadius())) return false;
  if (!bCanToggle && bActivated) return false;
- const double Now = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
- return Now - LastUseTime >= FMath::Max(0.0f, InteractionCooldown);
+ return GetWorld()->GetTimeSeconds() - LastUseTime >= FMath::Max(0.f, InteractionCooldown);
 }
 void ASPWorldMachine::Interact(AActor* User)
 {
