@@ -23,5 +23,10 @@ public:
  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment") TObjectPtr<UStaticMesh> GroundMesh;
  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment") TObjectPtr<UStaticMesh> PrimaryMesh;
  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment") TObjectPtr<UStaticMesh> SecondaryMesh;
+ UPROPERTY() TObjectPtr<UStaticMesh> FallbackPlaneMesh;
+ UPROPERTY() TObjectPtr<UStaticMesh> FallbackCubeMesh;
+ UPROPERTY() TObjectPtr<UStaticMesh> FallbackSphereMesh;
+ UPROPERTY() TObjectPtr<UStaticMesh> FallbackConeMesh;
+ UPROPERTY() TObjectPtr<UStaticMesh> FallbackCylinderMesh;
  UFUNCTION(CallInEditor, BlueprintCallable, Category="Environment") void BuildEnvironment();
 };
