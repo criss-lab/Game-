@@ -68,6 +68,7 @@ void ASPWorldMachine::Interact(AActor* User)
  bActivated = bCanToggle ? !bActivated : true;
  SetActorTickEnabled(MachineType == ESPWorldMachineType::CombatTurret && bActivated);
  OnMachineUsed(User, bActivated);
+ OnMachineStateChanged(bActivated);
  ForceNetUpdate();
 }
 void ASPWorldMachine::OnRep_Activated() { OnMachineStateChanged(bActivated); }
