@@ -66,20 +66,24 @@ void ASPDriveableVehicle::ServerSetDriveInput_Implementation(float Throttle, flo
 }
 void ASPDriveableVehicle::SetVehicleBrake(bool bPressed)
 {
- if (UChaosWheeledVehicleMovementComponent* Movement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovementComponent())) Movement->SetBrakeInput(bPressed ? 1.f : 0.f);
- if (!HasAuthority()) ServerSetVehicleBrakes(bPressed, false);
+ bBrakePressed = bPressed;
+ if (UChaosWheeledVehicleMovementComponent* Movement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovementComponent())) Movement->SetBrakeInput(bBrakePressed ? 1.f : 0.f);
+ if (!HasAuthority()) ServerSetVehicleBrakes(bBrakePressed, bHandbrakePressed);
 }
 void ASPDriveableVehicle::SetVehicleHandbrake(bool bPressed)
 {
- if (UChaosWheeledVehicleMovementComponent* Movement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovementComponent())) Movement->SetHandbrakeInput(bPressed);
- if (!HasAuthority()) ServerSetVehicleBrakes(false, bPressed);
+ bHandbrakePressed = bPressed;
+ if (UChaosWheeledVehicleMovementComponent* Movement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovementComponent())) Movement->SetHandbrakeInput(bHandbrakePressed);
+ if (!HasAuthority()) ServerSetVehicleBrakes(bBrakePressed, bHandbrakePressed);
 }
 void ASPDriveableVehicle::ServerSetVehicleBrakes_Implementation(bool bBrake, bool bHandbrake)
 {
+ bBrakePressed = bBrake;
+ bHandbrakePressed = bHandbrake;
  if (UChaosWheeledVehicleMovementComponent* Movement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovementComponent()))
  {
-  Movement->SetBrakeInput(bBrake ? 1.f : 0.f);
-  Movement->SetHandbrakeInput(bHandbrake);
+  Movement->SetBrakeInput(bBrakePressed ? 1.f : 0.f);
+  Movement->SetHandbrakeInput(bHandbrakePressed);
  }
 }
 void ASPDriveableVehicle::InputBrakePressed() { SetVehicleBrake(true); }
