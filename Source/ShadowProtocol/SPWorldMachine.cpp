@@ -81,6 +81,7 @@ void ASPWorldMachine::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 {
  Super::GetLifetimeReplicatedProps(OutLifetimeProps);
  DOREPLIFETIME(ASPWorldMachine, bActivated);
+ DOREPLIFETIME(ASPWorldMachine, MachineType);
 }
 
 void ASPWorldMachine::Tick(float DeltaSeconds)
