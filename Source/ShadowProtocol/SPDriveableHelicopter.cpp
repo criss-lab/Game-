@@ -43,9 +43,9 @@ void ASPDriveableHelicopter::ExitHelicopterAuthority()
  OldController->Possess(OldPawn); OldPawn->SetActorLocation(GetActorLocation()+GetActorRotation().RotateVector(ExitOffset),false,nullptr,ETeleportType::TeleportPhysics);
  OnPilotExited(OldPawn); PreviousPilotPawn=nullptr; PilotController=nullptr;
 }
-void ASPDriveableHelicopter::MoveForward(float V) { if (Controller) AddMovementInput(GetActorForwardVector(),V); }
-void ASPDriveableHelicopter::MoveRight(float V) { if (Controller) AddMovementInput(GetActorRightVector(),V); }
-void ASPDriveableHelicopter::MoveVertical(float V) { if (Controller) AddMovementInput(FVector::UpVector,V); }
+void ASPDriveableHelicopter::MoveForward(float V) { if (Controller && !FMath::IsNearlyZero(V)) { AddMovementInput(GetActorForwardVector(),V); if (!HasAuthority()) ServerMoveFlight(GetActorForwardVector(),V); } }
+void ASPDriveableHelicopter::MoveRight(float V) { if (Controller && !FMath::IsNearlyZero(V)) { AddMovementInput(GetActorRightVector(),V); if (!HasAuthority()) ServerMoveFlight(GetActorRightVector(),V); } }
+void ASPDriveableHelicopter::MoveVertical(float V) { if (Controller && !FMath::IsNearlyZero(V)) { AddMovementInput(FVector::UpVector,V); if (!HasAuthority()) ServerMoveFlight(FVector::UpVector,V); } }
 void ASPDriveableHelicopter::TurnYaw(float V) { if (Controller) AddControllerYawInput(V); }
 void ASPDriveableHelicopter::TiltPitch(float V) { if (Controller) AddControllerPitchInput(V); }
 
