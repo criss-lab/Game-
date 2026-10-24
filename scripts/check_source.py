@@ -2,13 +2,16 @@
 from pathlib import Path
 root = Path(__file__).resolve().parents[1]
 required = {
-    "ShadowProtocol.uproject": ["ShadowProtocol"],
-    "Source/ShadowProtocol/ShadowProtocol.Build.cs": ['"AIModule"', '"NavigationSystem"'],
+    "ShadowProtocol.uproject": ["ShadowProtocol", "ChaosVehiclesPlugin"],
+    "Source/ShadowProtocol/ShadowProtocol.Build.cs": ['"AIModule"', '"NavigationSystem"', '"ChaosVehicles"'],
     "Source/ShadowProtocol/SPGameMode.cpp": ["ASPCombatCharacter::StaticClass()"],
     "Source/ShadowProtocol/SPCombatCharacter.cpp": ["ServerMeleeAttack_Implementation", "HasAuthority()", "bSameAssignedTeam", "ApplyDamage"],
     "Source/ShadowProtocol/SPHealthComponent.cpp": ["DOREPLIFETIME", "HasAuthority()", "OnTakeAnyDamage"],
     "Source/ShadowProtocol/SPCombatAIController.cpp": ["TActorIterator", "IsPlayerControlled()", "RequestMeleeAttack"],
     "Source/ShadowProtocol/SPMissionObjective.cpp": ["HasAuthority()", "AdvanceScene", "DOREPLIFETIME"],
+    "Source/ShadowProtocol/SPMissionBootstrap.cpp": ["HasAuthority()", "bSpawned", "SpawnActor<ASPStreetBlock>", "SpawnActor<ASPDriveableVehicle>", "SpawnActor<ASPMissionObjective>"],
+    "Source/ShadowProtocol/SPStreetBlock.cpp": ["RebuildBlock", "AddInstance"],
+    "Source/ShadowProtocol/SPDriveableVehicle.cpp": ["CanEnterVehicle", "HasAuthority()"],
     "Config/DefaultInput.ini": ['ActionName="Melee"', 'AxisName="MoveForward"'],
 }
 errors = []
