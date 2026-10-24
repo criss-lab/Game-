@@ -5,10 +5,16 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/Controller.h"
+#include "Engine/StaticMesh.h"
+#include "UObject/ConstructorHelpers.h"
 ASPDriveableHelicopter::ASPDriveableHelicopter()
 {
  bReplicates = true; SetReplicateMovement(true); bUseControllerRotationYaw = true; bUseControllerRotationPitch = true;
  HelicopterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HelicopterMesh")); SetRootComponent(HelicopterMesh);
+ static ConstructorHelpers::FObjectFinder<UStaticMesh> BodyMesh(TEXT("/Engine/BasicShapes/Cube.Cube"));
+ if (BodyMesh.Succeeded()) HelicopterMesh->SetStaticMesh(BodyMesh.Object);
+ HelicopterMesh->SetRelativeScale3D(FVector(2.2f, 1.2f, 0.7f));
+ HelicopterMesh->SetCollisionProfileName(TEXT("Pawn"));
  CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom")); CameraBoom->SetupAttachment(HelicopterMesh); CameraBoom->TargetArmLength = 650.f; CameraBoom->bUsePawnControlRotation = true;
  PilotCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PilotCamera")); PilotCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
  FlightMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FlightMovement")); FlightMovement->UpdatedComponent = HelicopterMesh; FlightMovement->MaxSpeed = 1800.f;
