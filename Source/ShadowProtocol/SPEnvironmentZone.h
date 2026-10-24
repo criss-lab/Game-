@@ -3,6 +3,7 @@
 #include "GameFramework/Actor.h"
 #include "SPEnvironmentZone.generated.h"
 class UInstancedStaticMeshComponent;
+class UStaticMesh;
 UENUM(BlueprintType)
 enum class ESPEnvironmentBiome : uint8 { City, Forest, Suburb, Industrial, Desert, Coastal };
 UCLASS()
