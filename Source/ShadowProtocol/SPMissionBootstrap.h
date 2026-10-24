@@ -26,6 +26,12 @@ public:
  UPROPERTY(EditAnywhere, Category="Environment") TSubclassOf<ASPEnvironmentZone> EnvironmentClass;
  UPROPERTY(EditAnywhere, Category="Environment") ESPEnvironmentBiome EnvironmentBiome = ESPEnvironmentBiome::City;
  UPROPERTY(EditAnywhere, Category="Environment") FVector EnvironmentOffset = FVector(0.f, 0.f, 0.f);
+ UPROPERTY(EditAnywhere, Category="Environment") TObjectPtr<UStaticMesh> EnvironmentGroundMesh;
+ UPROPERTY(EditAnywhere, Category="Environment") TObjectPtr<UStaticMesh> EnvironmentPrimaryMesh;
+ UPROPERTY(EditAnywhere, Category="Environment") TObjectPtr<UStaticMesh> EnvironmentSecondaryMesh;
+ UPROPERTY(EditAnywhere, Category="Environment", meta=(ClampMin="0", ClampMax="500")) int32 EnvironmentScatterCount = 100;
+ UPROPERTY(EditAnywhere, Category="Environment", meta=(ClampMin="500.0")) float EnvironmentRadius = 5000.f;
+ UPROPERTY(EditAnywhere, Category="Environment") int32 EnvironmentSeed = 2050;
  UPROPERTY(EditAnywhere, Category="Environment", meta=(ClampMin="0", ClampMax="12")) int32 MachineCount = 3;
  UPROPERTY(EditAnywhere, Category="Environment") TSubclassOf<ASPWorldMachine> WorldMachineClass;
  UPROPERTY(EditAnywhere, Category="Environment") TArray<ESPWorldMachineType> MissionMachineTypes;
