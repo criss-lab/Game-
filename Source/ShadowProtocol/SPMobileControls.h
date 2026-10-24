@@ -1,0 +1,16 @@
+#pragma once
+#include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
+#include "SPMobileControls.generated.h"
+class ASPCombatCharacter;
+UCLASS(Abstract, Blueprintable)
+class SHADOWPROTOCOL_API USPMobileControls : public UUserWidget
+{
+ GENERATED_BODY()
+public:
+ UFUNCTION(BlueprintCallable, Category="Mobile") void PressMelee();
+ UFUNCTION(BlueprintCallable, Category="Mobile") void PressJump();
+ UFUNCTION(BlueprintCallable, Category="Mobile") void ReleaseJump();
+private:
+ ASPCombatCharacter* LocalCharacter() const;
+};
