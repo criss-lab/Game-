@@ -12,6 +12,8 @@ public:
  ASPCharacter();
  virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
  virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+ virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+ virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
  UPROPERTY(ReplicatedUsing=OnRep_Sprinting, BlueprintReadOnly, Category="Movement") bool bSprinting = false;
  UFUNCTION(BlueprintCallable, Category="Mobile") void MobileMove(FVector2D Axis);
  UFUNCTION(BlueprintCallable, Category="Mobile") void MobileLook(FVector2D Axis);
