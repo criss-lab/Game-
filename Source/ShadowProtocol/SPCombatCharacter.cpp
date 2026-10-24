@@ -3,6 +3,7 @@
 #include "SPArrowProjectile.h"
 #include "SPWorldMachine.h"
 #include "SPDriveableVehicle.h"
+#include "SPDriveableHelicopter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "Engine/World.h"
@@ -65,6 +66,11 @@ void ASPCombatCharacter::ExecuteInteraction()
  FCollisionQueryParams Params(SCENE_QUERY_STAT(SPWorldInteraction), true, this);
  if (GetWorld()->LineTraceSingleByChannel(Hit, ViewLocation, End, ECC_Visibility, Params))
  {
+  if (ASPDriveableHelicopter* Helicopter = Cast<ASPDriveableHelicopter>(Hit.GetActor()))
+  {
+   Helicopter->EnterHelicopter(this);
+   return;
+  }
   if (ASPDriveableVehicle* Vehicle = Cast<ASPDriveableVehicle>(Hit.GetActor()))
   {
    Vehicle->EnterVehicle(this);
