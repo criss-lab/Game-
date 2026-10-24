@@ -32,6 +32,15 @@ void USPHealthComponent::HandleAnyDamage(AActor* DamagedActor, float Damage, con
  OnRep_Health();
  GetOwner()->ForceNetUpdate();
 }
+float USPHealthComponent::RestoreHealth(float Amount)
+{
+ if (!GetOwner() || !GetOwner()->HasAuthority() || !FMath::IsFinite(Amount) || Amount <= 0.f || !IsAlive()) return 0.f;
+ const float Before = Health;
+ Health = FMath::Clamp(Health + Amount, 0.f, MaxHealth);
+ OnRep_Health();
+ GetOwner()->ForceNetUpdate();
+ return Health - Before;
+}
 void USPHealthComponent::OnRep_Health() { OnHealthChanged.Broadcast(Health, MaxHealth); }
 void USPHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
