@@ -34,5 +34,7 @@ private:
  void TurnYaw(float Value);
  void TiltPitch(float Value);
  UFUNCTION(Server, Reliable) void ServerExitHelicopter();
+ UFUNCTION(Server, Unreliable) void ServerMoveFlight(FVector Direction, float Scale);
+ UFUNCTION(Server, Unreliable) void ServerMobileMove(FVector2D Axis);
  void ExitHelicopterAuthority();
 };
