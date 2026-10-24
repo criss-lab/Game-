@@ -27,7 +27,15 @@ void USPProgressionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 }
 USPOfflineSave* USPProgressionSubsystem::EnsureData()
 {
- if (!Data) Data = Cast<USPOfflineSave>(UGameplayStatics::CreateSaveGameObject(USPOfflineSave::StaticClass()));
+ if (!Data)
+ {
+  Data = Cast<USPOfflineSave>(UGameplayStatics::CreateSaveGameObject(USPOfflineSave::StaticClass()));
+  if (Data)
+  {
+   Data->OwnedCars.AddUnique(FName(TEXT("STREET_COMPACT")));
+   Data->EquippedCar = FName(TEXT("STREET_COMPACT"));
+  }
+ }
  return Data;
 }
 bool USPProgressionSubsystem::LoadProgress()
@@ -53,8 +61,28 @@ bool USPProgressionSubsystem::LoadProgress()
  USPOfflineSave* Loaded = Cast<USPOfflineSave>(UGameplayStatics::LoadGameFromSlot(Slot, 0));
  if (!Loaded || Loaded->SaveVersion != 2) return false;
  Data = Loaded;
+ if (Data->OwnedCars.IsEmpty())
+ {
+  Data->OwnedCars.AddUnique(FName(TEXT("STREET_COMPACT")));
+  if (Data->EquippedCar.IsNone()) Data->EquippedCar = FName(TEXT("STREET_COMPACT"));
+  Commit();
+ }
  OnProgressionUpdated.Broadcast();
  return true;
+}
+bool USPProgressionSubsystem::SaveProgress() { return Commit(); }
+bool USPProgressionSubsystem::RecordLegacyMissionProgress(int32 MissionNumber)
+{
+ if (MissionNumber < 1 || MissionNumber > 1000 || !EnsureData()) return false;
+ if (MissionNumber > Data->UnlockedMission || MissionNumber <= Data->CompletedMissions) return false;
+ const int32 PreviousCompleted = Data->CompletedMissions;
+ const int32 PreviousUnlocked = Data->UnlockedMission;
+ Data->CompletedMissions = MissionNumber;
+ Data->UnlockedMission = FMath::Max(Data->UnlockedMission, MissionNumber + 1);
+ if (Commit()) return true;
+ Data->CompletedMissions = PreviousCompleted;
+ Data->UnlockedMission = PreviousUnlocked;
+ return false;
 }
 bool USPProgressionSubsystem::SetAlias(const FString& Alias)
 {
