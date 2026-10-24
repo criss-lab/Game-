@@ -26,7 +26,7 @@ public:
  UPROPERTY(EditAnywhere, Category="Environment") FVector EnvironmentOffset = FVector(0.f, 0.f, 0.f);
  UPROPERTY(EditAnywhere, Category="Environment", meta=(ClampMin="0", ClampMax="12")) int32 MachineCount = 3;
  UPROPERTY(EditAnywhere, Category="Environment") TSubclassOf<ASPWorldMachine> WorldMachineClass;
- UPROPERTY(EditAnywhere, Category="Environment") TArray<ESPWorldMachineType> MissionMachineTypes = { ESPWorldMachineType::SecurityConsole, ESPWorldMachineType::CombatTurret, ESPWorldMachineType::ArrowCache };
+ UPROPERTY(EditAnywhere, Category="Environment") TArray<ESPWorldMachineType> MissionMachineTypes;
  UPROPERTY(EditAnywhere, Category="Environment") FVector MachineStart = FVector(850.f, 600.f, 50.f);
  UPROPERTY(EditAnywhere, Category="Mission") int32 EnemyCount = 3;
  UPROPERTY(EditAnywhere, Category="Mission") FVector StreetOffset = FVector::ZeroVector;
