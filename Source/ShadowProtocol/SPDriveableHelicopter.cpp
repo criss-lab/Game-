@@ -67,3 +67,16 @@ void ASPDriveableHelicopter::MobileVertical(float Value)
 {
  MoveVertical(FMath::Clamp(Value, -1.f, 1.f));
 }
+
+void ASPDriveableHelicopter::ServerMoveFlight_Implementation(FVector Direction, float Scale)
+{
+ if (Direction.ContainsNaN() || !FMath::IsFinite(Scale)) return;
+ AddMovementInput(Direction.GetSafeNormal(), FMath::Clamp(Scale, -1.f, 1.f));
+}
+void ASPDriveableHelicopter::ServerMobileMove_Implementation(FVector2D Axis)
+{
+ if (Axis.ContainsNaN()) return;
+ Axis = Axis.GetClampedToMaxSize(1.f);
+ AddMovementInput(GetActorForwardVector(), Axis.Y);
+ AddMovementInput(GetActorRightVector(), Axis.X);
+}
