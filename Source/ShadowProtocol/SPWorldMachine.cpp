@@ -6,9 +6,11 @@
 #include "SPHealthComponent.h"
 #include "SPDriveableVehicle.h"
 #include "Kismet/GameplayStatics.h"
+#include "EngineUtils.h"
 ASPWorldMachine::ASPWorldMachine()
 {
- PrimaryActorTick.bCanEverTick = false;
+ PrimaryActorTick.bCanEverTick = true;
+ PrimaryActorTick.bStartWithTickEnabled = false;
  bReplicates = true;
  SetReplicateMovement(true);
  SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
@@ -64,6 +66,7 @@ void ASPWorldMachine::Interact(AActor* User)
   }
  }
  bActivated = bCanToggle ? !bActivated : true;
+ SetActorTickEnabled(MachineType == ESPWorldMachineType::CombatTurret && bActivated);
  OnMachineUsed(User, bActivated);
  ForceNetUpdate();
 }
@@ -72,4 +75,33 @@ void ASPWorldMachine::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 {
  Super::GetLifetimeReplicatedProps(OutLifetimeProps);
  DOREPLIFETIME(ASPWorldMachine, bActivated);
+}
+
+void ASPWorldMachine::Tick(float DeltaSeconds)
+{
+ Super::Tick(DeltaSeconds);
+ if (!HasAuthority() || MachineType != ESPWorldMachineType::CombatTurret || !bActivated || !GetWorld()) return;
+ ASPCombatCharacter* BestTarget = nullptr;
+ float BestDistance = FMath::Square(FMath::Max(100.f, TurretRange));
+ for (TActorIterator<ASPCombatCharacter> It(GetWorld()); It; ++It)
+ {
+  ASPCombatCharacter* Candidate = *It;
+  if (!IsValid(Candidate) || !Candidate->HealthComponent || !Candidate->HealthComponent->IsAlive()) continue;
+  const ESPTeam Team = Candidate->GetCombatTeam();
+  if (Team == ESPTeam::Unassigned || (TurretTeam != ESPTeam::Unassigned && Team == TurretTeam)) continue;
+  const float Distance = FVector::DistSquared(GetActorLocation(), Candidate->GetActorLocation());
+  if (Distance < BestDistance) { BestDistance = Distance; BestTarget = Candidate; }
+ }
+ if (!BestTarget) return;
+ const FVector Muzzle = GetActorLocation() + FVector(0.f, 0.f, 80.f);
+ const FVector TargetPoint = BestTarget->GetActorLocation() + FVector(0.f, 0.f, 45.f);
+ if (MachineMesh) MachineMesh->SetWorldRotation((TargetPoint - Muzzle).Rotation());
+ FHitResult Hit;
+ FCollisionQueryParams Params(SCENE_QUERY_STAT(SPTurretLOS), true, this);
+ const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Muzzle, TargetPoint, ECC_Visibility, Params);
+ if (bHit && Hit.GetActor() != BestTarget) return;
+ const double Now = GetWorld()->GetTimeSeconds();
+ if (Now - LastTurretShotTime < FMath::Max(0.1f, TurretFireInterval)) return;
+ LastTurretShotTime = Now;
+ UGameplayStatics::ApplyDamage(BestTarget, FMath::Max(0.f, TurretDamage), nullptr, this, UDamageType::StaticClass());
 }
