@@ -2,6 +2,7 @@
 #include "SPHealthComponent.h"
 #include "SPArrowProjectile.h"
 #include "SPWorldMachine.h"
+#include "SPDriveableVehicle.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "Engine/World.h"
@@ -64,6 +65,11 @@ void ASPCombatCharacter::ExecuteInteraction()
  FCollisionQueryParams Params(SCENE_QUERY_STAT(SPWorldInteraction), true, this);
  if (GetWorld()->LineTraceSingleByChannel(Hit, ViewLocation, End, ECC_Visibility, Params))
  {
+  if (ASPDriveableVehicle* Vehicle = Cast<ASPDriveableVehicle>(Hit.GetActor()))
+  {
+   Vehicle->EnterVehicle(this);
+   return;
+  }
   if (ASPWorldMachine* Machine = Cast<ASPWorldMachine>(Hit.GetActor()))
   {
    Machine->Interact(this);
