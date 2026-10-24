@@ -16,7 +16,7 @@ required = {
     "Source/ShadowProtocol/SPMissionRewards.cpp": ["ESPScene::Debrief", "CompleteMission", "NM_Standalone"],
     "Source/ShadowProtocol/SPProgressionSubsystem.cpp": ["PurchaseCar", "EquipCar", "RewardedMissions", "STREET_COMPACT", "SPORT_COUPE"],
     "Source/ShadowProtocol/SPCoinPickup.cpp": ["CollectPickup", "NM_Standalone"],
-    "Source/ShadowProtocol/SPProfileSubsystem.cpp": ["SaveGameToSlot", "LoadGameFromSlot", "SetLocalAlias"],
+    "Source/ShadowProtocol/SPProfileSubsystem.cpp": ["SaveProgress", "RecordLegacyMissionProgress", "SetLocalAlias"],
     "Config/DefaultInput.ini": ['ActionName="Melee"', 'AxisName="MoveForward"'],
 }
 errors = []
