@@ -1,6 +1,5 @@
 #include "SPCombatCharacter.h"
 #include "SPHealthComponent.h"
-#include "SPPlayerState.h"
 #include "Components/InputComponent.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
@@ -9,6 +8,11 @@ ASPCombatCharacter::ASPCombatCharacter()
 {
  bReplicates = true;
  HealthComponent = CreateDefaultSubobject<USPHealthComponent>(TEXT("HealthComponent"));
+}
+ESPTeam ASPCombatCharacter::GetCombatTeam() const
+{
+ const ASPPlayerState* State = GetPlayerState<ASPPlayerState>();
+ return State && State->GetTeam() != ESPTeam::Unassigned ? State->GetTeam() : BotTeam;
 }
 void ASPCombatCharacter::SetupPlayerInputComponent(UInputComponent* Input)
 {
@@ -22,6 +26,7 @@ void ASPCombatCharacter::RequestMeleeAttack()
  else ServerMeleeAttack();
 }
 void ASPCombatCharacter::ServerMeleeAttack_Implementation() { ExecuteMeleeAttack(); }
+void ASPCombatCharacter::MulticastAttackPerformed_Implementation() { OnAttackPerformed(); }
 void ASPCombatCharacter::ExecuteMeleeAttack()
 {
  if (!HasAuthority() || !HealthComponent || !HealthComponent->IsAlive() || !GetWorld()) return;
@@ -37,14 +42,14 @@ void ASPCombatCharacter::ExecuteMeleeAttack()
   ASPCombatCharacter* Victim = Cast<ASPCombatCharacter>(Hit.GetActor());
   if (Victim && Victim != this && Victim->HealthComponent && Victim->HealthComponent->IsAlive())
   {
-   const ASPPlayerState* MyState = GetPlayerState<ASPPlayerState>();
-   const ASPPlayerState* TheirState = Victim->GetPlayerState<ASPPlayerState>();
-   const bool bSameAssignedTeam = MyState && TheirState && MyState->GetTeam() != ESPTeam::Unassigned && MyState->GetTeam() == TheirState->GetTeam();
+   const ESPTeam Mine = GetCombatTeam();
+   const ESPTeam Theirs = Victim->GetCombatTeam();
+   const bool bSameAssignedTeam = Mine != ESPTeam::Unassigned && Mine == Theirs;
    if (!bSameAssignedTeam)
    {
     UGameplayStatics::ApplyDamage(Victim, AttackDamage, GetController(), this, UDamageType::StaticClass());
    }
   }
  }
- OnAttackPerformed();
+ MulticastAttackPerformed();
 }
