@@ -70,7 +70,7 @@ void ASPWorldMachine::Interact(AActor* User)
  OnMachineUsed(User, bActivated);
  ForceNetUpdate();
 }
-void ASPWorldMachine::OnRep_Activated() { }
+void ASPWorldMachine::OnRep_Activated() { OnMachineStateChanged(bActivated); }
 void ASPWorldMachine::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
  Super::GetLifetimeReplicatedProps(OutLifetimeProps);
