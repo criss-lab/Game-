@@ -36,4 +36,6 @@ private:
  void InputHandbrakeReleased();
  float ThrottleValue = 0.f;
  float SteeringValue = 0.f;
+ bool bBrakePressed = false;
+ bool bHandbrakePressed = false;
 };
