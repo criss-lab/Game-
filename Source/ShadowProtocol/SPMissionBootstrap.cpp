@@ -37,7 +37,7 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
    Rewards->BindDirector(Director);
   }
  }
- if (EnvironmentClass || EnvironmentBiome != ESPEnvironmentBiome::City || EnvironmentGroundMesh || EnvironmentPrimaryMesh || EnvironmentSecondaryMesh)
+ if (EnvironmentClass || EnvironmentBiome != ESPEnvironmentBiome::City || EnvironmentScatterCount > 0 || EnvironmentGroundMesh || EnvironmentPrimaryMesh || EnvironmentSecondaryMesh)
  {
   const TSubclassOf<ASPEnvironmentZone> ZoneType = EnvironmentClass ? EnvironmentClass : ASPEnvironmentZone::StaticClass();
   ASPEnvironmentZone* Zone = GetWorld()->SpawnActor<ASPEnvironmentZone>(ZoneType, GetActorTransform().TransformPosition(EnvironmentOffset), GetActorRotation());
