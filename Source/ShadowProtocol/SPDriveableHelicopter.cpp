@@ -1,0 +1,44 @@
+#include "SPDriveableHelicopter.h"
+#include "Components/StaticMeshComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
+#include "Components/InputComponent.h"
+#include "GameFramework/Controller.h"
+ASPDriveableHelicopter::ASPDriveableHelicopter()
+{
+ bReplicates = true; SetReplicateMovement(true); bUseControllerRotationYaw = true; bUseControllerRotationPitch = true;
+ HelicopterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HelicopterMesh")); SetRootComponent(HelicopterMesh);
+ CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom")); CameraBoom->SetupAttachment(HelicopterMesh); CameraBoom->TargetArmLength = 650.f; CameraBoom->bUsePawnControlRotation = true;
+ PilotCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PilotCamera")); PilotCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+ FlightMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FlightMovement")); FlightMovement->UpdatedComponent = HelicopterMesh; FlightMovement->MaxSpeed = 1800.f;
+}
+void ASPDriveableHelicopter::SetupPlayerInputComponent(UInputComponent* Input)
+{
+ Super::SetupPlayerInputComponent(Input); if (!Input) return;
+ Input->BindAxis(TEXT("MoveForward"),this,&ASPDriveableHelicopter::MoveForward);
+ Input->BindAxis(TEXT("MoveRight"),this,&ASPDriveableHelicopter::MoveRight);
+ Input->BindAxis(TEXT("HelicopterVertical"),this,&ASPDriveableHelicopter::MoveVertical);
+ Input->BindAxis(TEXT("Turn"),this,&ASPDriveableHelicopter::TurnYaw);
+ Input->BindAxis(TEXT("LookUp"),this,&ASPDriveableHelicopter::TiltPitch);
+ Input->BindAction(TEXT("ExitVehicle"),IE_Pressed,this,&ASPDriveableHelicopter::ExitHelicopter);
+}
+bool ASPDriveableHelicopter::EnterHelicopter(APawn* Passenger)
+{
+ if (!HasAuthority() || !IsValid(Passenger) || Passenger==this || !Passenger->GetController() || GetController()) return false;
+ PreviousPilotPawn=Passenger; PilotController=Passenger->GetController(); PilotController->Possess(this); OnPilotEntered(PreviousPilotPawn); return GetController()==PilotController;
+}
+void ASPDriveableHelicopter::ExitHelicopter() { if (HasAuthority()) ExitHelicopterAuthority(); else ServerExitHelicopter(); }
+void ASPDriveableHelicopter::ServerExitHelicopter_Implementation() { ExitHelicopterAuthority(); }
+void ASPDriveableHelicopter::ExitHelicopterAuthority()
+{
+ if (!HasAuthority() || !IsValid(PreviousPilotPawn) || !IsValid(PilotController) || PilotController->GetPawn()!=this) return;
+ APawn* OldPawn=PreviousPilotPawn; AController* OldController=PilotController;
+ OldController->Possess(OldPawn); OldPawn->SetActorLocation(GetActorLocation()+GetActorRotation().RotateVector(ExitOffset),false,nullptr,ETeleportType::TeleportPhysics);
+ OnPilotExited(OldPawn); PreviousPilotPawn=nullptr; PilotController=nullptr;
+}
+void ASPDriveableHelicopter::MoveForward(float V) { if (Controller) AddMovementInput(GetActorForwardVector(),V); }
+void ASPDriveableHelicopter::MoveRight(float V) { if (Controller) AddMovementInput(GetActorRightVector(),V); }
+void ASPDriveableHelicopter::MoveVertical(float V) { if (Controller) AddMovementInput(FVector::UpVector,V); }
+void ASPDriveableHelicopter::TurnYaw(float V) { if (Controller) AddControllerYawInput(V); }
+void ASPDriveableHelicopter::TiltPitch(float V) { if (Controller) AddControllerPitchInput(V); }
