@@ -14,6 +14,8 @@ public:
  UPROPERTY(BlueprintAssignable, Category="Progression") FSPProgressionUpdated OnProgressionUpdated;
  UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Garage") TArray<FSPCarOffer> CarCatalog;
  UFUNCTION(BlueprintCallable, Category="Progression") bool LoadProgress();
+ UFUNCTION(BlueprintCallable, Category="Profile") bool SetAlias(const FString& Alias);
+ UFUNCTION(BlueprintPure, Category="Profile") FString GetAlias() const;
  UFUNCTION(BlueprintCallable, Category="Progression") bool CompleteMission(FSPMissionReward Reward);
  UFUNCTION(BlueprintCallable, Category="Progression") bool CollectPickup(FName UniquePickupId, int32 Amount);
  UFUNCTION(BlueprintCallable, Category="Garage") bool PurchaseCar(FName CarId);
