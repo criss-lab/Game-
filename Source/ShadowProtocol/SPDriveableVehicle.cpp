@@ -12,11 +12,11 @@ ASPDriveableVehicle::ASPDriveableVehicle()
 }
 bool ASPDriveableVehicle::CanEnterVehicle(APawn* Passenger) const
 {
- return HasAuthority() && IsValid(Passenger) && Passenger != this && Passenger->GetController() != nullptr && GetController() == nullptr;
+ return IsValid(Passenger) && Passenger != this && Passenger->GetController() != nullptr && GetController() == nullptr;
 }
 bool ASPDriveableVehicle::EnterVehicle(APawn* Passenger)
 {
- if (!CanEnterVehicle(Passenger)) return false;
+ if (!HasAuthority() || !CanEnterVehicle(Passenger)) return false;
  PreviousDriverPawn = Passenger;
  PreviousDriverController = Passenger->GetController();
  PreviousDriverController->Possess(this);
