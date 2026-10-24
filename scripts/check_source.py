@@ -5,7 +5,7 @@ required = {
     "ShadowProtocol.uproject": ["ShadowProtocol", "ChaosVehiclesPlugin"],
     "Source/ShadowProtocol/ShadowProtocol.Build.cs": ['"AIModule"', '"NavigationSystem"', '"ChaosVehicles"', '"UMG"'],
     "Source/ShadowProtocol/SPGameMode.cpp": ["ASPCombatCharacter::StaticClass()"],
-    "Source/ShadowProtocol/SPCombatCharacter.cpp": ["ServerMeleeAttack_Implementation", "HasAuthority()", "bSameAssignedTeam", "ApplyDamage", "MulticastAttackPerformed"],
+    "Source/ShadowProtocol/SPCombatCharacter.cpp": ["ServerMeleeAttack_Implementation", "HasAuthority()", "Mine == Theirs", "ApplyDamage", "MulticastAttackPerformed"],
     "Source/ShadowProtocol/SPHealthComponent.cpp": ["DOREPLIFETIME", "HasAuthority()", "OnTakeAnyDamage"],
     "Source/ShadowProtocol/SPCombatAIController.cpp": ["TActorIterator", "GetCombatTeam()", "RequestMeleeAttack"],
     "Source/ShadowProtocol/SPMissionObjective.cpp": ["HasAuthority()", "AdvanceScene", "DOREPLIFETIME"],
