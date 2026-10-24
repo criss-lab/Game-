@@ -1,8 +1,6 @@
 #include "SPCombatAIController.h"
 #include "SPCombatCharacter.h"
 #include "SPHealthComponent.h"
-#include "SPPlayerState.h"
-#include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
@@ -16,15 +14,17 @@ void ASPCombatAIController::Think()
 {
  ASPCombatCharacter* Self = Cast<ASPCombatCharacter>(GetPawn());
  if (!Self || !Self->HealthComponent || !Self->HealthComponent->IsAlive()) { StopMovement(); return; }
- const ASPPlayerState* MyState = Self->GetPlayerState<ASPPlayerState>();
  ASPCombatCharacter* Target = nullptr;
  float BestDistance = DetectionRadius;
  for (TActorIterator<ASPCombatCharacter> It(GetWorld()); It; ++It)
  {
   ASPCombatCharacter* Candidate = *It;
-  if (Candidate == Self || !Candidate->IsPlayerControlled() || !Candidate->HealthComponent || !Candidate->HealthComponent->IsAlive()) continue;
-  const ASPPlayerState* TheirState = Candidate->GetPlayerState<ASPPlayerState>();
-  if (MyState && TheirState && MyState->GetTeam() != ESPTeam::Unassigned && MyState->GetTeam() == TheirState->GetTeam()) continue;
+  if (Candidate == Self || !Candidate->HealthComponent || !Candidate->HealthComponent->IsAlive()) continue;
+  const ESPTeam Mine = Self->GetCombatTeam();
+  const ESPTeam Theirs = Candidate->GetCombatTeam();
+  if (Mine != ESPTeam::Unassigned && Mine == Theirs) continue;
+  // Unassigned bots are not targets in solo mode; player pawns remain eligible.
+  if (!Candidate->IsPlayerControlled() && Theirs == ESPTeam::Unassigned) continue;
   const float Distance = FVector::Dist(Self->GetActorLocation(), Candidate->GetActorLocation());
   if (Distance < BestDistance) { Target = Candidate; BestDistance = Distance; }
  }
