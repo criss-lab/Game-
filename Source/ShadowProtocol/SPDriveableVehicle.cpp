@@ -1,5 +1,6 @@
 #include "SPDriveableVehicle.h"
 #include "Components/InputComponent.h"
+#include "ChaosWheeledVehicleMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/Pawn.h"
 #include "Engine/World.h"
@@ -23,11 +24,68 @@ bool ASPDriveableVehicle::EnterVehicle(APawn* Passenger)
  ForceNetUpdate();
  return GetController() == PreviousDriverController;
 }
-void ASPDriveableVehicle::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ASPDriveableVehicle::SetupPlayerInputComponent(UInputComponent* Input)
 {
- Super::SetupPlayerInputComponent(PlayerInputComponent);
- if (PlayerInputComponent) PlayerInputComponent->BindAction(TEXT("ExitVehicle"), IE_Pressed, this, &ASPDriveableVehicle::ExitVehicle);
+ Super::SetupPlayerInputComponent(Input);
+ if (!Input) return;
+ Input->BindAxis(TEXT("VehicleThrottle"), this, &ASPDriveableVehicle::InputThrottle);
+ Input->BindAxis(TEXT("VehicleSteering"), this, &ASPDriveableVehicle::InputSteering);
+ Input->BindAction(TEXT("Brake"), IE_Pressed, this, &ASPDriveableVehicle::InputBrakePressed);
+ Input->BindAction(TEXT("Brake"), IE_Released, this, &ASPDriveableVehicle::InputBrakeReleased);
+ Input->BindAction(TEXT("Handbrake"), IE_Pressed, this, &ASPDriveableVehicle::InputHandbrakePressed);
+ Input->BindAction(TEXT("Handbrake"), IE_Released, this, &ASPDriveableVehicle::InputHandbrakeReleased);
+ Input->BindAction(TEXT("ExitVehicle"), IE_Pressed, this, &ASPDriveableVehicle::ExitVehicle);
 }
+void ASPDriveableVehicle::InputThrottle(float Value) { ThrottleValue = FMath::Clamp(Value, -1.f, 1.f); UpdateDriveInput(); }
+void ASPDriveableVehicle::InputSteering(float Value) { SteeringValue = FMath::Clamp(Value, -1.f, 1.f); UpdateDriveInput(); }
+void ASPDriveableVehicle::SetMobileDriveInput(FVector2D Axis)
+{
+ Axis = Axis.GetClampedToMaxSize(1.f);
+ ThrottleValue = Axis.Y;
+ SteeringValue = Axis.X;
+ UpdateDriveInput();
+}
+void ASPDriveableVehicle::UpdateDriveInput()
+{
+ if (UChaosWheeledVehicleMovementComponent* Movement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovementComponent()))
+ {
+  Movement->SetThrottleInput(ThrottleValue);
+  Movement->SetSteeringInput(SteeringValue);
+ }
+ if (!HasAuthority()) ServerSetDriveInput(ThrottleValue, SteeringValue);
+}
+void ASPDriveableVehicle::ServerSetDriveInput_Implementation(float Throttle, float Steering)
+{
+ ThrottleValue = FMath::Clamp(Throttle, -1.f, 1.f);
+ SteeringValue = FMath::Clamp(Steering, -1.f, 1.f);
+ if (UChaosWheeledVehicleMovementComponent* Movement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovementComponent()))
+ {
+  Movement->SetThrottleInput(ThrottleValue);
+  Movement->SetSteeringInput(SteeringValue);
+ }
+}
+void ASPDriveableVehicle::SetVehicleBrake(bool bPressed)
+{
+ if (UChaosWheeledVehicleMovementComponent* Movement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovementComponent())) Movement->SetBrakeInput(bPressed ? 1.f : 0.f);
+ if (!HasAuthority()) ServerSetVehicleBrakes(bPressed, false);
+}
+void ASPDriveableVehicle::SetVehicleHandbrake(bool bPressed)
+{
+ if (UChaosWheeledVehicleMovementComponent* Movement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovementComponent())) Movement->SetHandbrakeInput(bPressed);
+ if (!HasAuthority()) ServerSetVehicleBrakes(false, bPressed);
+}
+void ASPDriveableVehicle::ServerSetVehicleBrakes_Implementation(bool bBrake, bool bHandbrake)
+{
+ if (UChaosWheeledVehicleMovementComponent* Movement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovementComponent()))
+ {
+  Movement->SetBrakeInput(bBrake ? 1.f : 0.f);
+  Movement->SetHandbrakeInput(bHandbrake);
+ }
+}
+void ASPDriveableVehicle::InputBrakePressed() { SetVehicleBrake(true); }
+void ASPDriveableVehicle::InputBrakeReleased() { SetVehicleBrake(false); }
+void ASPDriveableVehicle::InputHandbrakePressed() { SetVehicleHandbrake(true); }
+void ASPDriveableVehicle::InputHandbrakeReleased() { SetVehicleHandbrake(false); }
 void ASPDriveableVehicle::ExitVehicle()
 {
  if (HasAuthority()) ExitVehicleAuthority();
