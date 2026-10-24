@@ -1,7 +1,7 @@
 #include "SPCinematicDirector.h"
 #include "LevelSequence.h"
 #include "LevelSequencePlayer.h"
-#include "MovieSceneSequencePlaybackSettings.h"
+#include "LevelSequenceActor.h"
 ASPCinematicDirector::ASPCinematicDirector()
 {
  PrimaryActorTick.bCanEverTick = false;
