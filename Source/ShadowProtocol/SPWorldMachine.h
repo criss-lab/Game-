@@ -44,6 +44,7 @@ public:
  UFUNCTION(BlueprintCallable, Category="Machine") bool CanInteract(AActor* User) const;
  UFUNCTION(BlueprintCallable, Category="Machine") void Interact(AActor* User);
  UFUNCTION(BlueprintImplementableEvent, Category="Machine") void OnMachineUsed(AActor* User, bool bNowActivated);
+ UFUNCTION(BlueprintImplementableEvent, Category="Machine") void OnMachineStateChanged(bool bNowActivated);
  UFUNCTION() void OnRep_Activated();
  virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:
