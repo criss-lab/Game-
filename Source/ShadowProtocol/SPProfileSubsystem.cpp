@@ -1,8 +1,6 @@
 #include "SPProfileSubsystem.h"
 #include "SPProgressionSubsystem.h"
 #include "Engine/GameInstance.h"
-const FString USPProfileSubsystem::SlotName(TEXT("ShadowProtocolLocalV1"));
-USPOfflineSave* USPProfileSubsystem::EnsureProfile() { return nullptr; }
 bool USPProfileSubsystem::LoadLocalProfile()
 {
  auto* Progress = GetGameInstance() ? GetGameInstance()->GetSubsystem<USPProgressionSubsystem>() : nullptr;
@@ -10,8 +8,8 @@ bool USPProfileSubsystem::LoadLocalProfile()
 }
 bool USPProfileSubsystem::SaveLocalProfile()
 {
- // Writes are performed transactionally by the unified progression subsystem.
- return GetGameInstance() && GetGameInstance()->GetSubsystem<USPProgressionSubsystem>() != nullptr;
+ auto* Progress = GetGameInstance() ? GetGameInstance()->GetSubsystem<USPProgressionSubsystem>() : nullptr;
+ return Progress && Progress->SaveProgress();
 }
 bool USPProfileSubsystem::SetLocalAlias(const FString& Alias)
 {
@@ -25,7 +23,9 @@ FString USPProfileSubsystem::GetLocalAlias() const
 }
 void USPProfileSubsystem::RecordMissionCompleted(int32 MissionNumber)
 {
- // Deprecated: only validated offline debrief via SPMissionRewards can award completion.
+ // Legacy compatibility only updates mission progress; it never grants rewards.
+ auto* Progress = GetGameInstance() ? GetGameInstance()->GetSubsystem<USPProgressionSubsystem>() : nullptr;
+ if (Progress) Progress->RecordLegacyMissionProgress(MissionNumber);
 }
 int32 USPProfileSubsystem::GetUnlockedMission() const
 {
