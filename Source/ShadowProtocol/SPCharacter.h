@@ -11,6 +11,8 @@ class SHADOWPROTOCOL_API ASPCharacter : public ACharacter
 public:
  ASPCharacter();
  virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+ UFUNCTION(BlueprintCallable, Category="Mobile") void MobileMove(FVector2D Axis);
+ UFUNCTION(BlueprintCallable, Category="Mobile") void MobileLook(FVector2D Axis);
 protected:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera") TObjectPtr<USpringArmComponent> CameraBoom;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera") TObjectPtr<UCameraComponent> FollowCamera;
