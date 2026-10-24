@@ -26,7 +26,8 @@ public:
  UFUNCTION(BlueprintCallable, Category="Combat") void RequestMeleeAttack();
  UFUNCTION(BlueprintImplementableEvent, Category="Combat") void OnAttackPerformed();
 private:
- UFUNCTION(Server, Reliable) void ServerMeleeAttack();\n UFUNCTION(Server, Reliable) void ServerSetBlocking(bool bNewBlocking);
+ UFUNCTION(Server, Reliable) void ServerMeleeAttack();
+ UFUNCTION(Server, Reliable) void ServerSetBlocking(bool bNewBlocking);
  UFUNCTION(NetMulticast, Unreliable) void MulticastAttackPerformed();
  void ExecuteMeleeAttack();
  double LastAttackTime = -1000.0;
