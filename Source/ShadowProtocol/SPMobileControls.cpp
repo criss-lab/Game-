@@ -48,3 +48,8 @@ void USPMobileControls::PressExitVehicle()
  if (ASPDriveableVehicle* Vehicle = Cast<ASPDriveableVehicle>(Pawn)) Vehicle->ExitVehicle();
  else if (ASPDriveableHelicopter* Helicopter = Cast<ASPDriveableHelicopter>(Pawn)) Helicopter->ExitHelicopter();
 }
+
+void USPMobileControls::PressBrake() { if (ASPDriveableVehicle* V = Cast<ASPDriveableVehicle>(GetOwningPlayerPawn())) V->SetVehicleBrake(true); }
+void USPMobileControls::ReleaseBrake() { if (ASPDriveableVehicle* V = Cast<ASPDriveableVehicle>(GetOwningPlayerPawn())) V->SetVehicleBrake(false); }
+void USPMobileControls::PressHandbrake() { if (ASPDriveableVehicle* V = Cast<ASPDriveableVehicle>(GetOwningPlayerPawn())) V->SetVehicleHandbrake(true); }
+void USPMobileControls::ReleaseHandbrake() { if (ASPDriveableVehicle* V = Cast<ASPDriveableVehicle>(GetOwningPlayerPawn())) V->SetVehicleHandbrake(false); }
