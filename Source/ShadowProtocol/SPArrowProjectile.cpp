@@ -4,6 +4,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "SPCombatCharacter.h"
+#include "Engine/StaticMesh.h"
+#include "UObject/ConstructorHelpers.h"
 ASPArrowProjectile::ASPArrowProjectile()
 {
  PrimaryActorTick.bCanEverTick = false;
@@ -18,6 +20,10 @@ ASPArrowProjectile::ASPArrowProjectile()
  Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
  ArrowMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ArrowMesh"));
  ArrowMesh->SetupAttachment(Collision);
+ static ConstructorHelpers::FObjectFinder<UStaticMesh> ArrowAsset(TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
+ if (ArrowAsset.Succeeded()) ArrowMesh->SetStaticMesh(ArrowAsset.Object);
+ ArrowMesh->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+ ArrowMesh->SetRelativeScale3D(FVector(0.04f, 0.04f, 0.7f));
  ArrowMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
  ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
  ProjectileMovement->UpdatedComponent = Collision;
