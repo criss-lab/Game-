@@ -32,7 +32,7 @@ public:
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Machine") TObjectPtr<USceneComponent> SceneRoot;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Machine") TObjectPtr<UStaticMeshComponent> MachineMesh;
  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Machine") TObjectPtr<USphereComponent> InteractionRadius;
- UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Machine") ESPWorldMachineType MachineType = ESPWorldMachineType::SecurityConsole;
+ UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category="Machine") ESPWorldMachineType MachineType = ESPWorldMachineType::SecurityConsole;
  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Machine") FText DisplayName;
  UPROPERTY(ReplicatedUsing=OnRep_Activated, BlueprintReadOnly, Category="Machine") bool bActivated = false;
  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Machine") bool bCanToggle = true;
