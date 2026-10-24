@@ -4,6 +4,7 @@
 #include "SPCombatAIController.h"
 #include "SPDriveableVehicle.h"
 #include "SPMissionObjective.h"
+#include "SPMissionRewards.h"
 #include "SPSceneDirector.h"
 #include "Engine/World.h"
 ASPMissionBootstrap::ASPMissionBootstrap()
@@ -22,6 +23,17 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
  bSpawned = true;
  const FTransform Origin = GetActorTransform();
  Director = GetWorld()->SpawnActor<ASPSceneDirector>(ASPSceneDirector::StaticClass(), Origin);
+ if (Director && GetNetMode() == NM_Standalone)
+ {
+  ASPMissionRewards* Rewards = GetWorld()->SpawnActor<ASPMissionRewards>(ASPMissionRewards::StaticClass(), Origin);
+  if (Rewards)
+  {
+   Rewards->Reward.Mission = 1;
+   Rewards->Reward.Coins = 500;
+   Rewards->Reward.XP = 350;
+   Rewards->BindDirector(Director);
+  }
+ }
  if (StreetClass)
  {
   ASPStreetBlock* Street = GetWorld()->SpawnActor<ASPStreetBlock>(StreetClass, GetActorLocation()+StreetOffset, GetActorRotation());
@@ -43,17 +55,10 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
    }
   }
  }
- if (VehicleClass)
- {
-  GetWorld()->SpawnActor<ASPDriveableVehicle>(VehicleClass, GetActorTransform().TransformPosition(VehiclePosition), GetActorRotation());
- }
+ if (VehicleClass) GetWorld()->SpawnActor<ASPDriveableVehicle>(VehicleClass, GetActorTransform().TransformPosition(VehiclePosition), GetActorRotation());
  if (ObjectiveClass && Director)
  {
   ASPMissionObjective* Objective = GetWorld()->SpawnActor<ASPMissionObjective>(ObjectiveClass, GetActorTransform().TransformPosition(FirstObjectivePosition), GetActorRotation());
-  if (Objective)
-  {
-   Objective->Director = Director;
-   Objective->AdvanceTo = ESPScene::Infiltration;
-  }
+  if (Objective) { Objective->Director = Director; Objective->AdvanceTo = ESPScene::Infiltration; }
  }
 }
