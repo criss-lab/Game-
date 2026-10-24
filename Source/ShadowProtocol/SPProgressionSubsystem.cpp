@@ -20,6 +20,11 @@ USPProgressionSubsystem::USPProgressionSubsystem()
  AddOffer(TEXT("SPORT_COUPE"), TEXT("Sport Coupe"), 3500, 4);
 }
 
+void USPProgressionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+ Super::Initialize(Collection);
+ LoadProgress();
+}
 USPOfflineSave* USPProgressionSubsystem::EnsureData()
 {
  if (!Data) Data = Cast<USPOfflineSave>(UGameplayStatics::CreateSaveGameObject(USPOfflineSave::StaticClass()));
