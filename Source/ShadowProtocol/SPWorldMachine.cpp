@@ -7,6 +7,8 @@
 #include "SPDriveableVehicle.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
+#include "Engine/StaticMesh.h"
+#include "UObject/ConstructorHelpers.h"
 ASPWorldMachine::ASPWorldMachine()
 {
  PrimaryActorTick.bCanEverTick = true;
@@ -17,6 +19,9 @@ ASPWorldMachine::ASPWorldMachine()
  SetRootComponent(SceneRoot);
  MachineMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MachineMesh"));
  MachineMesh->SetupAttachment(SceneRoot);
+ static ConstructorHelpers::FObjectFinder<UStaticMesh> MachineCube(TEXT("/Engine/BasicShapes/Cube.Cube"));
+ if (MachineCube.Succeeded()) MachineMesh->SetStaticMesh(MachineCube.Object);
+ MachineMesh->SetRelativeScale3D(FVector(1.2f, 1.2f, 1.2f));
  MachineMesh->SetCollisionProfileName(TEXT("BlockAll"));
  InteractionRadius = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionRadius"));
  InteractionRadius->SetupAttachment(SceneRoot);
