@@ -21,6 +21,9 @@ public:
  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Helicopter") FVector ExitOffset = FVector(-250.f, 180.f, -80.f);
  UFUNCTION(BlueprintCallable, Category="Helicopter") bool EnterHelicopter(APawn* Passenger);
  UFUNCTION(BlueprintCallable, Category="Helicopter") void ExitHelicopter();
+ UFUNCTION(BlueprintCallable, Category="Helicopter") void MobileMove(FVector2D Axis);
+ UFUNCTION(BlueprintCallable, Category="Helicopter") void MobileLook(FVector2D Axis);
+ UFUNCTION(BlueprintCallable, Category="Helicopter") void MobileVertical(float Value);
  UFUNCTION(BlueprintImplementableEvent, Category="Helicopter") void OnPilotEntered(APawn* PreviousPawn);
  UFUNCTION(BlueprintImplementableEvent, Category="Helicopter") void OnPilotExited(APawn* PreviousPawn);
  virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
