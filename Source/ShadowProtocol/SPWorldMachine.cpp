@@ -28,14 +28,14 @@ ASPWorldMachine::ASPWorldMachine()
 }
 bool ASPWorldMachine::CanInteract(AActor* User) const
 {
- if (!HasAuthority() || !IsValid(User) || User == this || !InteractionRadius || !GetWorld()) return false;
+ if (!IsValid(User) || User == this || !InteractionRadius || !GetWorld()) return false;
  if (FVector::DistSquared(User->GetActorLocation(), GetActorLocation()) > FMath::Square(InteractionRadius->GetScaledSphereRadius())) return false;
  if (!bCanToggle && bActivated) return false;
  return GetWorld()->GetTimeSeconds() - LastUseTime >= FMath::Max(0.f, InteractionCooldown);
 }
 void ASPWorldMachine::Interact(AActor* User)
 {
- if (!CanInteract(User)) return;
+ if (!HasAuthority() || !CanInteract(User)) return;
  if (MachineType == ESPWorldMachineType::Trailer)
  {
   TArray<AActor*> Vehicles;
