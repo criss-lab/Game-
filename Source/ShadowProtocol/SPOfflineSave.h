@@ -11,5 +11,6 @@ public:
  UPROPERTY(BlueprintReadOnly, SaveGame) int32 SaveVersion = 1;
  UPROPERTY(BlueprintReadWrite, SaveGame) int32 UnlockedMission = 1;
  UPROPERTY(BlueprintReadWrite, SaveGame) int32 CompletedMissions = 0;
+ UPROPERTY(BlueprintReadWrite, SaveGame) FString LocalAlias = TEXT("Ghost-0001");
  UPROPERTY(BlueprintReadWrite, SaveGame) FSPPlaySelection LastSelection;
 };
