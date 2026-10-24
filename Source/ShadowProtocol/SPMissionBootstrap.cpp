@@ -6,11 +6,14 @@
 #include "SPMissionObjective.h"
 #include "SPMissionRewards.h"
 #include "SPSceneDirector.h"
+#include "SPEnvironmentZone.h"
+#include "SPWorldMachine.h"
 #include "Engine/World.h"
 ASPMissionBootstrap::ASPMissionBootstrap()
 {
  PrimaryActorTick.bCanEverTick = false;
  bReplicates = true;
+ MissionMachineTypes = { ESPWorldMachineType::SecurityConsole, ESPWorldMachineType::CombatTurret, ESPWorldMachineType::ArrowCache };
 }
 void ASPMissionBootstrap::BeginPlay()
 {
@@ -32,6 +35,21 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
    Rewards->Reward.Coins = 500;
    Rewards->Reward.XP = 350;
    Rewards->BindDirector(Director);
+  }
+ }
+ if (EnvironmentClass)
+ {
+  ASPEnvironmentZone* Zone = GetWorld()->SpawnActor<ASPEnvironmentZone>(EnvironmentClass, GetActorTransform().TransformPosition(EnvironmentOffset), GetActorRotation());
+  if (Zone) { Zone->Biome = EnvironmentBiome; Zone->BuildEnvironment(); }
+ }
+ if (WorldMachineClass)
+ {
+  const int32 SafeMachines = FMath::Clamp(MachineCount, 0, 12);
+  for (int32 Index = 0; Index < SafeMachines; ++Index)
+  {
+   const FVector Offset = MachineStart + FVector((Index / 3) * 500.f, (Index % 3) * 450.f, 0.f);
+   ASPWorldMachine* Machine = GetWorld()->SpawnActor<ASPWorldMachine>(WorldMachineClass, GetActorTransform().TransformPosition(Offset), GetActorRotation());
+   if (Machine) Machine->MachineType = MissionMachineTypes.IsValidIndex(Index) ? MissionMachineTypes[Index] : ESPWorldMachineType::SecurityConsole;
   }
  }
  if (StreetClass)
