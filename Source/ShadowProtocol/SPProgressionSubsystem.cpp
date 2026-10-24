@@ -2,6 +2,23 @@
 #include "SPOfflineSave.h"
 #include "Kismet/GameplayStatics.h"
 const FString USPProgressionSubsystem::Slot(TEXT("ShadowProtocolProgressV2"));
+USPProgressionSubsystem::USPProgressionSubsystem()
+{
+ auto AddOffer = [this](const TCHAR* Id, const TCHAR* Name, int32 Price, int32 Mission)
+ {
+  FSPCarOffer Offer;
+  Offer.Id = FName(Id);
+  Offer.DisplayName = FText::FromString(Name);
+  Offer.Price = Price;
+  Offer.RequiredMission = Mission;
+  CarCatalog.Add(Offer);
+ };
+ AddOffer(TEXT("STREET_COMPACT"), TEXT("Street Compact"), 250, 1);
+ AddOffer(TEXT("CITY_SEDAN"), TEXT("City Sedan"), 800, 2);
+ AddOffer(TEXT("TACTICAL_SUV"), TEXT("Tactical SUV"), 1800, 3);
+ AddOffer(TEXT("SPORT_COUPE"), TEXT("Sport Coupe"), 3500, 4);
+}
+
 USPOfflineSave* USPProgressionSubsystem::EnsureData()
 {
  if (!Data) Data = Cast<USPOfflineSave>(UGameplayStatics::CreateSaveGameObject(USPOfflineSave::StaticClass()));
