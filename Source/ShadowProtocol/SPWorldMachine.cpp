@@ -88,7 +88,7 @@ void ASPWorldMachine::Tick(float DeltaSeconds)
   ASPCombatCharacter* Candidate = *It;
   if (!IsValid(Candidate) || !Candidate->HealthComponent || !Candidate->HealthComponent->IsAlive()) continue;
   const ESPTeam Team = Candidate->GetCombatTeam();
-  if (Team == ESPTeam::Unassigned || (TurretTeam != ESPTeam::Unassigned && Team == TurretTeam)) continue;
+  if (TurretTeam != ESPTeam::Unassigned && Team == TurretTeam) continue;
   const float Distance = FVector::DistSquared(GetActorLocation(), Candidate->GetActorLocation());
   if (Distance < BestDistance) { BestDistance = Distance; BestTarget = Candidate; }
  }
