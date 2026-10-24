@@ -17,6 +17,9 @@ required = {
     "Source/ShadowProtocol/SPProgressionSubsystem.cpp": ["PurchaseCar", "EquipCar", "RewardedMissions", "STREET_COMPACT", "SPORT_COUPE"],
     "Source/ShadowProtocol/SPCoinPickup.cpp": ["CollectPickup", "NM_Standalone"],
     "Source/ShadowProtocol/SPProfileSubsystem.cpp": ["SaveProgress", "RecordLegacyMissionProgress", "SetLocalAlias"],
+    "Source/ShadowProtocol/SPProgressionWidget.cpp": ["OnProgressionUpdated", "BuyCar", "SelectCar"],
+    "Source/ShadowProtocol/SPGarageSpawner.cpp": ["GetEquippedCar", "OwnsCar", "SpawnActor<ASPDriveableVehicle>"],
+    "Source/ShadowProtocol/SPThrillerPresentation.cpp": ["THE BLACK CONVOY", "THE ENFORCER", "LAST EXIT", "PresentBeat"],
     "Config/DefaultInput.ini": ['ActionName="Melee"', 'AxisName="MoveForward"'],
 }
 errors = []
