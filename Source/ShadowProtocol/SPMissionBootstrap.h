@@ -3,6 +3,7 @@
 #include "GameFramework/Actor.h"
 #include "SPEnvironmentZone.h"
 #include "SPWorldMachine.h"
+#include "SPDriveableHelicopter.h"
 #include "SPMissionBootstrap.generated.h"
 class ASPStreetBlock;
 class ASPCombatCharacter;
@@ -20,6 +21,7 @@ public:
  UPROPERTY(EditAnywhere, Category="Mission") TSubclassOf<ASPCombatCharacter> EnemyClass;
  UPROPERTY(EditAnywhere, Category="Mission") TSubclassOf<ASPCombatAIController> EnemyControllerClass;
  UPROPERTY(EditAnywhere, Category="Mission") TSubclassOf<ASPDriveableVehicle> VehicleClass;
+ UPROPERTY(EditAnywhere, Category="Mission") TSubclassOf<ASPDriveableHelicopter> HelicopterClass;
  UPROPERTY(EditAnywhere, Category="Mission") TSubclassOf<ASPMissionObjective> ObjectiveClass;
  UPROPERTY(EditAnywhere, Category="Environment") TSubclassOf<ASPEnvironmentZone> EnvironmentClass;
  UPROPERTY(EditAnywhere, Category="Environment") ESPEnvironmentBiome EnvironmentBiome = ESPEnvironmentBiome::City;
@@ -32,6 +34,7 @@ public:
  UPROPERTY(EditAnywhere, Category="Mission") FVector StreetOffset = FVector::ZeroVector;
  UPROPERTY(EditAnywhere, Category="Mission") FVector EnemyStart = FVector(1200.f, 300.f, 120.f);
  UPROPERTY(EditAnywhere, Category="Mission") FVector VehiclePosition = FVector(3500.f, 0.f, 130.f);
+ UPROPERTY(EditAnywhere, Category="Mission") FVector HelicopterPosition = FVector(4800.f, 900.f, 450.f);
  UPROPERTY(EditAnywhere, Category="Mission") FVector FirstObjectivePosition = FVector(650.f, 0.f, 120.f);
  UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category="Mission") void SpawnGrayboxMission();
 protected:
