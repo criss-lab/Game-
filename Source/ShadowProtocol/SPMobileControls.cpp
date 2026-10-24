@@ -8,6 +8,8 @@ void USPMobileControls::PressMelee()
 {
  if (ASPCombatCharacter* Character = LocalCharacter()) Character->RequestMeleeAttack();
 }
+void USPMobileControls::PressInteract() { if (ASPCombatCharacter* C = LocalCharacter()) C->InteractWithWorld(); }
+void USPMobileControls::PressArrowFire() { if (ASPCombatCharacter* C = LocalCharacter()) C->FireArrow(); }
 void USPMobileControls::PressJump()
 {
  if (ASPCombatCharacter* Character = LocalCharacter()) Character->Jump();
