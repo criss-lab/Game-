@@ -2,6 +2,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "SPCombatCharacter.h"
+#include "SPHealthComponent.h"
 ASPWorldMachine::ASPWorldMachine()
 {
  PrimaryActorTick.bCanEverTick = false;
@@ -31,6 +33,19 @@ void ASPWorldMachine::Interact(AActor* User)
 {
  if (!CanInteract(User)) return;
  LastUseTime = GetWorld()->GetTimeSeconds();
+ if (ASPCombatCharacter* Character = Cast<ASPCombatCharacter>(User))
+ {
+  if (MachineType == ESPWorldMachineType::ArrowCache || MachineType == ESPWorldMachineType::BowRack)
+  {
+   Character->ArrowAmmo = FMath::Min(12, Character->ArrowAmmo + 6);
+   Character->OnArrowAmmoChanged(Character->ArrowAmmo);
+   Character->ForceNetUpdate();
+  }
+  else if (MachineType == ESPWorldMachineType::MedicalStation && Character->HealthComponent)
+  {
+   Character->HealthComponent->RestoreHealth(35.f);
+  }
+ }
  bActivated = bCanToggle ? !bActivated : true;
  OnMachineUsed(User, bActivated);
  ForceNetUpdate();
