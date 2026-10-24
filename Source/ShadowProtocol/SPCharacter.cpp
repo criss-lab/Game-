@@ -3,9 +3,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/InputComponent.h"
+#include "Net/UnrealNetwork.h"
 ASPCharacter::ASPCharacter()
 {
- PrimaryActorTick.bCanEverTick = false;
+ PrimaryActorTick.bCanEverTick = false;\n bReplicates = true;
  bUseControllerRotationYaw = false;
  GetCharacterMovement()->bOrientRotationToMovement = true;
  GetCharacterMovement()->RotationRate = FRotator(0.f, 720.f, 0.f);
@@ -66,7 +67,7 @@ void ASPCharacter::StopSprint()
 }
 void ASPCharacter::ToggleCrouch()
 {
- if (bIsCrouched) { UnCrouch(); StopSprint(); } else { Crouch(); if (GetCharacterMovement()) GetCharacterMovement()->MaxWalkSpeed = WalkSpeed * 0.55f; }
+ if (bIsCrouched) { UnCrouch(); StopSprint(); } else { StopSprint(); Crouch(); if (GetCharacterMovement()) GetCharacterMovement()->MaxWalkSpeed = WalkSpeed * 0.55f; }
 }
 void ASPCharacter::Dodge()
 {
