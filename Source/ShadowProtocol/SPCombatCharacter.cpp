@@ -33,23 +33,36 @@ void ASPCombatCharacter::ExecuteMeleeAttack()
  const double Now = GetWorld()->GetTimeSeconds();
  if (Now - LastAttackTime < AttackCooldown) return;
  LastAttackTime = Now;
- const FVector Start = GetActorLocation() + FVector(0,0,55);
- const FVector End = Start + GetActorForwardVector() * AttackRange;
- FHitResult Hit;
+ // Face the nearest valid hostile in a short forward arc before the authoritative hit check.
+ const FVector Start = GetActorLocation() + FVector(0.f, 0.f, 55.f);
+ const FVector Forward = GetActorForwardVector().GetSafeNormal();
+ const FVector End = Start + Forward * FMath::Clamp(AttackRange, 0.f, 300.f);
+ TArray<FHitResult> Hits;
  FCollisionQueryParams Params(SCENE_QUERY_STAT(SPMelee), false, this);
- if (GetWorld()->SweepSingleByChannel(Hit, Start, End, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(55.f), Params))
+ GetWorld()->SweepMultiByChannel(Hits, Start, End, FQuat::Identity, ECC_Pawn,
+  FCollisionShape::MakeSphere(FMath::Clamp(AttackRadius, 1.f, 80.f)), Params);
+ ASPCombatCharacter* BestVictim = nullptr;
+ float BestDistance = TNumericLimits<float>::Max();
+ for (const FHitResult& Hit : Hits)
  {
   ASPCombatCharacter* Victim = Cast<ASPCombatCharacter>(Hit.GetActor());
-  if (Victim && Victim != this && Victim->HealthComponent && Victim->HealthComponent->IsAlive())
-  {
-   const ESPTeam Mine = GetCombatTeam();
-   const ESPTeam Theirs = Victim->GetCombatTeam();
-   const bool bSameAssignedTeam = Mine != ESPTeam::Unassigned && Mine == Theirs;
-   if (!bSameAssignedTeam)
-   {
-    UGameplayStatics::ApplyDamage(Victim, AttackDamage, GetController(), this, UDamageType::StaticClass());
-   }
-  }
+  if (!Victim || Victim == this || !Victim->HealthComponent || !Victim->HealthComponent->IsAlive()) continue;
+  const ESPTeam Mine = GetCombatTeam();
+  const ESPTeam Theirs = Victim->GetCombatTeam();
+  if (Mine != ESPTeam::Unassigned && Mine == Theirs) continue;
+  const FVector ToVictim = Victim->GetActorLocation() - GetActorLocation();
+  const float Distance = ToVictim.Size();
+  if (Distance > AttackRange + 100.f || FVector::DotProduct(Forward, ToVictim.GetSafeNormal()) < AttackConeDot) continue;
+  FHitResult Obstruction;
+  FCollisionQueryParams LOSParams(SCENE_QUERY_STAT(SPMeleeLOS), true, this);
+  LOSParams.AddIgnoredActor(Victim);
+  const bool bBlocked = GetWorld()->LineTraceSingleByChannel(Obstruction, Start, Victim->GetActorLocation() + FVector(0.f,0.f,45.f), ECC_Visibility, LOSParams);
+  if (bBlocked) continue;
+  if (Distance < BestDistance) { BestDistance = Distance; BestVictim = Victim; }
+ }
+ if (BestVictim)
+ {
+  UGameplayStatics::ApplyDamage(BestVictim, FMath::Max(0.f, AttackDamage), GetController(), this, UDamageType::StaticClass());
  }
  MulticastAttackPerformed();
 }
