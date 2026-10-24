@@ -11,6 +11,8 @@ public:
  UFUNCTION(BlueprintCallable, Category="Mobile") void PressMelee();
  UFUNCTION(BlueprintCallable, Category="Mobile") void PressJump();
  UFUNCTION(BlueprintCallable, Category="Mobile") void ReleaseJump();
+ UFUNCTION(BlueprintCallable, Category="Mobile") void SetMoveStick(FVector2D Axis);
+ UFUNCTION(BlueprintCallable, Category="Mobile") void SetLookStick(FVector2D Axis);
 private:
  ASPCombatCharacter* LocalCharacter() const;
 };
