@@ -4,9 +4,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/InputComponent.h"
 #include "Net/UnrealNetwork.h"
+
 ASPCharacter::ASPCharacter()
 {
- PrimaryActorTick.bCanEverTick = false;\n bReplicates = true;
+ PrimaryActorTick.bCanEverTick = false;
+ bReplicates = true;
  bUseControllerRotationYaw = false;
  GetCharacterMovement()->bOrientRotationToMovement = true;
  GetCharacterMovement()->RotationRate = FRotator(0.f, 720.f, 0.f);
@@ -17,6 +19,7 @@ ASPCharacter::ASPCharacter()
  GetCharacterMovement()->AirControl = 0.35f;
  GetCharacterMovement()->JumpZVelocity = 520.f;
  GetCharacterMovement()->BrakingDecelerationFalling = 1200.f;
+ GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
  CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
  CameraBoom->SetupAttachment(RootComponent);
  CameraBoom->TargetArmLength = 320.f;
@@ -57,30 +60,63 @@ void ASPCharacter::MoveRight(float Value)
 void ASPCharacter::LookYaw(float Value) { AddControllerYawInput(Value); }
 void ASPCharacter::LookPitch(float Value) { AddControllerPitchInput(Value); }
 void ASPCharacter::StartJump() { if (CanJump()) Jump(); }
+void ASPCharacter::StopJumpingInput() { StopJumping(); }
 void ASPCharacter::StartSprint()
 {
- if (GetCharacterMovement() && !bIsCrouched) GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+ if (bIsCrouched) return;
+ bSprinting = true;
+ OnRep_Sprinting();
+ if (HasAuthority()) ServerSetSprinting_Implementation(true);
+ else ServerSetSprinting(true);
 }
 void ASPCharacter::StopSprint()
 {
- if (GetCharacterMovement()) GetCharacterMovement()->MaxWalkSpeed = bIsCrouched ? WalkSpeed * 0.55f : WalkSpeed;
+ bSprinting = false;
+ OnRep_Sprinting();
+ if (HasAuthority()) ServerSetSprinting_Implementation(false);
+ else ServerSetSprinting(false);
+}
+void ASPCharacter::ServerSetSprinting_Implementation(bool bNewSprinting)
+{
+ bSprinting = bNewSprinting && !bIsCrouched;
+ OnRep_Sprinting();
+ ForceNetUpdate();
+}
+void ASPCharacter::OnRep_Sprinting()
+{
+ if (GetCharacterMovement())
+  GetCharacterMovement()->MaxWalkSpeed = bIsCrouched ? WalkSpeed * 0.55f : (bSprinting ? SprintSpeed : WalkSpeed);
+}
+void ASPCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+ Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+ DOREPLIFETIME(ASPCharacter, bSprinting);
 }
 void ASPCharacter::ToggleCrouch()
 {
- if (bIsCrouched) { UnCrouch(); StopSprint(); } else { StopSprint(); Crouch(); if (GetCharacterMovement()) GetCharacterMovement()->MaxWalkSpeed = WalkSpeed * 0.55f; }
+ if (bIsCrouched)
+ {
+  UnCrouch();
+  StopSprint();
+ }
+ else
+ {
+  StopSprint();
+  Crouch();
+  if (GetCharacterMovement()) GetCharacterMovement()->MaxWalkSpeed = WalkSpeed * 0.55f;
+ }
 }
 void ASPCharacter::Dodge()
 {
- if (!IsLocallyControlled() || !GetCharacterMovement() || GetCharacterMovement()->IsFalling()) return;
+ if (!IsLocallyControlled() || !GetCharacterMovement() || GetCharacterMovement()->IsFalling() || !GetWorld()) return;
  const double Now = GetWorld()->GetTimeSeconds();
  if (Now - LastDodgeTime < DodgeCooldown) return;
  LastDodgeTime = Now;
  FVector Direction = GetLastMovementInputVector();
  Direction.Z = 0.f;
  if (Direction.IsNearlyZero()) Direction = GetActorForwardVector();
- LaunchCharacter(Direction.GetSafeNormal() * DodgeStrength + FVector(0,0,80.f), true, true);
+ LaunchCharacter(Direction.GetSafeNormal() * DodgeStrength + FVector(0.f, 0.f, 80.f), true, true);
 }
-void ASPCharacter::StopJumpingInput() { StopJumping(); }
 void ASPCharacter::MobileMove(FVector2D Axis)
 {
  if (!IsLocallyControlled()) return;
