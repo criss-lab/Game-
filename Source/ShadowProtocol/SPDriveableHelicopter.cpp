@@ -9,6 +9,7 @@
 #include "UObject/ConstructorHelpers.h"
 ASPDriveableHelicopter::ASPDriveableHelicopter()
 {
+ PrimaryActorTick.bCanEverTick = true;
  bReplicates = true; SetReplicateMovement(true); bUseControllerRotationYaw = true; bUseControllerRotationPitch = true;
  HelicopterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HelicopterMesh")); SetRootComponent(HelicopterMesh);
  static ConstructorHelpers::FObjectFinder<UStaticMesh> BodyMesh(TEXT("/Engine/BasicShapes/Cube.Cube"));
@@ -65,7 +66,16 @@ void ASPDriveableHelicopter::MobileLook(FVector2D Axis)
 }
 void ASPDriveableHelicopter::MobileVertical(float Value)
 {
- MoveVertical(FMath::Clamp(Value, -1.f, 1.f));
+ MobileVerticalInput = FMath::Clamp(Value, -1.f, 1.f);
+}
+void ASPDriveableHelicopter::Tick(float DeltaSeconds)
+{
+ Super::Tick(DeltaSeconds);
+ if (Controller && !FMath::IsNearlyZero(MobileVerticalInput))
+ {
+  AddMovementInput(FVector::UpVector, MobileVerticalInput);
+  if (!HasAuthority()) ServerMoveFlight(FVector::UpVector, MobileVerticalInput);
+ }
 }
 
 void ASPDriveableHelicopter::ServerMoveFlight_Implementation(FVector Direction, float Scale)
