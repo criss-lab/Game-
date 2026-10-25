@@ -24,13 +24,12 @@ void ASPMissionObjective::BeginPlay()
  Super::BeginPlay();
  if (HasAuthority())
  {
-  FTimerHandle CheckTimer;
   GetWorldTimerManager().SetTimer(CheckTimer, this, &ASPMissionObjective::CheckOccupants, 0.25f, true);
  }
 }
 void ASPMissionObjective::CheckOccupants()
 {
- if (bCompleted || !Director || static_cast<uint8>(AdvanceTo) != static_cast<uint8>(Director->CurrentScene) + 1) return;
+ if (!HasAuthority() || bCompleted || !Director || static_cast<uint8>(AdvanceTo) != static_cast<uint8>(Director->CurrentScene) + 1) return;
  TArray<AActor*> Occupants;
  Trigger->GetOverlappingActors(Occupants, APawn::StaticClass());
  for (AActor* Occupant : Occupants)
@@ -66,7 +65,7 @@ void ASPMissionObjective::OnTrigger(UPrimitiveComponent* OverlappedComponent, AA
  OnRep_Completed();
  ForceNetUpdate();
 }
-void ASPMissionObjective::OnRep_Completed() { if (bCompleted) { Trigger->SetGenerateOverlapEvents(false); ObjectiveCompleted(); } }
+void ASPMissionObjective::OnRep_Completed() { if (bCompleted) { GetWorldTimerManager().ClearTimer(CheckTimer); Trigger->SetGenerateOverlapEvents(false); ObjectiveCompleted(); } }
 void ASPMissionObjective::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
  Super::GetLifetimeReplicatedProps(OutLifetimeProps);
