@@ -1,6 +1,10 @@
 #include "SPMissionObjective.h"
 #include "SPCombatCharacter.h"
 #include "SPHealthComponent.h"
+#include "SPWorldMachine.h"
+#include "SPDriveableVehicle.h"
+#include "SPDriveableHelicopter.h"
+#include "EngineUtils.h"
 #include "Components/BoxComponent.h"
 #include "Net/UnrealNetwork.h"
 ASPMissionObjective::ASPMissionObjective()
@@ -17,7 +21,23 @@ void ASPMissionObjective::OnTrigger(UPrimitiveComponent* OverlappedComponent, AA
 {
  if (!HasAuthority() || bCompleted || !Director) return;
  ASPCombatCharacter* Player = Cast<ASPCombatCharacter>(OtherActor);
- if (!Player || !Player->IsPlayerControlled() || !Player->HealthComponent || !Player->HealthComponent->IsAlive()) return;
+ if (Requirement == ESPObjectiveRequirement::EscapeInVehicle)
+ {
+  APawn* Vehicle = Cast<ASPDriveableVehicle>(OtherActor);
+  if (!Vehicle) Vehicle = Cast<ASPDriveableHelicopter>(OtherActor);
+  if (!Vehicle || !Vehicle->IsPlayerControlled()) return;
+ }
+ else if (!Player || !Player->IsPlayerControlled() || !Player->HealthComponent || !Player->HealthComponent->IsAlive()) return;
+ if (Requirement == ESPObjectiveRequirement::ActivateMachine && (!IsValid(RequiredMachine) || !RequiredMachine->bActivated)) return;
+ if (Requirement == ESPObjectiveRequirement::ClearEnemies)
+ {
+  for (TActorIterator<ASPCombatCharacter> It(GetWorld()); It; ++It)
+  {
+   ASPCombatCharacter* Enemy = *It;
+   if (Enemy && !Enemy->IsPlayerControlled() && Enemy->HealthComponent && Enemy->HealthComponent->IsAlive()
+       && FVector::DistSquared(Enemy->GetActorLocation(), GetActorLocation()) <= FMath::Square(FMath::Max(100.f, EnemyClearRadius))) return;
+  }
+ }
  if (static_cast<uint8>(AdvanceTo) != static_cast<uint8>(Director->CurrentScene) + 1) return;
  Director->AdvanceScene(AdvanceTo);
  bCompleted = true;
