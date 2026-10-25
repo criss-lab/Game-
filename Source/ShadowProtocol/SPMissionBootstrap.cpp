@@ -105,7 +105,8 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
    Stage->Director = Director;
    Stage->AdvanceTo = Stages[Index];
    if (Index == 0) { Stage->Requirement = ESPObjectiveRequirement::ActivateMachine; Stage->RequiredMachine = MissionConsole; }
-   if (Index == 1 || Index == 2) Stage->Requirement = ESPObjectiveRequirement::ClearEnemies;
+   if (Index == 1) Stage->Requirement = ESPObjectiveRequirement::ClearEnemies;
+   if (Index == 2) Stage->Requirement = ESPObjectiveRequirement::Reach;
    if (Index == 3) Stage->Requirement = ESPObjectiveRequirement::EscapeInVehicle;
   }
  }
