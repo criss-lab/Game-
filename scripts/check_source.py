@@ -4,6 +4,7 @@ root = Path(__file__).resolve().parents[1]
 required = {
     "Build/Android/ShadowProtocolStorage_UPL.xml": ['name="android:installLocation"', 'value="preferExternal"'],
     "Source/ShadowProtocol/ShadowProtocol.Build.cs": ['AdditionalPropertiesForReceipt.Add("AndroidPlugin"', '"ShadowProtocolStorage_UPL.xml"'],
+    "Source/ShadowProtocol/SPPlayableLoopAutomation.cpp": ['ShadowProtocol.PlayMode.Validation', 'MissionMachineTypes.Contains', 'DefaultPawnClass'],
     "ShadowProtocol.uproject": ["ShadowProtocol", "ChaosVehiclesPlugin"],
     "Source/ShadowProtocol/ShadowProtocol.Build.cs": ['"AIModule"', '"NavigationSystem"', '"ChaosVehicles"', '"UMG"'],
     "Source/ShadowProtocol/SPGameMode.cpp": ["ASPCombatCharacter::StaticClass()"],
