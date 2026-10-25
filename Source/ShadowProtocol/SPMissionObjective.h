@@ -25,6 +25,7 @@ public:
  UFUNCTION() void CheckOccupants();
  virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:
+ FTimerHandle CheckTimer;
  UFUNCTION() void OnTrigger(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
  UFUNCTION() void OnRep_Completed();
 };
