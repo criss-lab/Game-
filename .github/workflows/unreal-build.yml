@@ -5,6 +5,8 @@ jobs:
   windows-editor:
     runs-on: [self-hosted, Windows, X64, unreal-5-5]
     timeout-minutes: 90
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - name: Verify Unreal installation
@@ -19,9 +21,19 @@ jobs:
           $ubt = Join-Path $env:UE_ROOT 'Engine/Build/BatchFiles/Build.bat'
           & $ubt ShadowProtocolEditor Win64 Development "-Project=$PWD/ShadowProtocol.uproject" -WaitMutex -NoHotReloadFromIDE
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-      - name: Run play-mode automation test
+      - name: Run Unreal automation smoke test
         shell: pwsh
         run: |
           $editor = Join-Path $env:UE_ROOT 'Engine/Binaries/Win64/UnrealEditor-Cmd.exe'
-          & $editor "$PWD/ShadowProtocol.uproject" -unattended -nop4 -nullrhi -ExecCmds="Automation RunTests ShadowProtocol.PlayMode.Validation; Quit" -TestExit="Automation Test Queue Empty" -log
+          & $editor "$PWD/ShadowProtocol.uproject" -unattended -nop4 -nullrhi -ExecCmds="Automation RunTests ShadowProtocol.PlayMode.Validation; Quit" -TestExit="Automation Test Queue Empty" -ReportExportPath="$PWD/AutomationReport" -log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload Unreal test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ShadowProtocol-Windows-Compile-Test-Evidence
+          path: |
+            Saved/Logs/*.log
+            AutomationReport/**
+          if-no-files-found: warn
+          retention-days: 14
