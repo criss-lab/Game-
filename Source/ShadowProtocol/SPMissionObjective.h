@@ -21,6 +21,8 @@ public:
  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Mission") float EnemyClearRadius = 1600.f;
  UPROPERTY(ReplicatedUsing=OnRep_Completed, BlueprintReadOnly, Category="Mission") bool bCompleted = false;
  UFUNCTION(BlueprintImplementableEvent, Category="Mission") void ObjectiveCompleted();
+ virtual void BeginPlay() override;
+ UFUNCTION() void CheckOccupants();
  virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:
  UFUNCTION() void OnTrigger(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
