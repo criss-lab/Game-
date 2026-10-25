@@ -28,10 +28,13 @@ jobs:
           $apks = @(Get-ChildItem -Path $archive -Filter '*.apk' -Recurse -File)
           if ($apks.Count -eq 0) { throw 'Packaging reported success but no APK was produced' }
           $apks | ForEach-Object { Write-Host "APK: $($_.FullName) SHA256: $((Get-FileHash $_.FullName -Algorithm SHA256).Hash)" }
+          $apks | ForEach-Object { "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(), $_.Name } | Set-Content -Path (Join-Path $archive 'SHA256SUMS.txt')
       - name: Upload development APK
         uses: actions/upload-artifact@v4
         with:
           name: ShadowProtocol-Android-Development-APK
-          path: AndroidPackage/**/*.apk
+          path: |
+            AndroidPackage/**/*.apk
+            AndroidPackage/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 14
