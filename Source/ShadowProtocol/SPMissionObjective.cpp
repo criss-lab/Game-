@@ -7,6 +7,7 @@
 #include "EngineUtils.h"
 #include "Components/BoxComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "TimerManager.h"
 ASPMissionObjective::ASPMissionObjective()
 {
  bReplicates = true;
@@ -16,6 +17,26 @@ ASPMissionObjective::ASPMissionObjective()
  Trigger->SetBoxExtent(FVector(120.f,120.f,120.f));
  Trigger->SetCollisionProfileName(TEXT("Trigger"));
  Trigger->OnComponentBeginOverlap.AddDynamic(this, &ASPMissionObjective::OnTrigger);
+}
+void ASPMissionObjective::BeginPlay()
+{
+ Super::BeginPlay();
+ if (HasAuthority())
+ {
+  FTimerHandle CheckTimer;
+  GetWorldTimerManager().SetTimer(CheckTimer, this, &ASPMissionObjective::CheckOccupants, 0.25f, true);
+ }
+}
+void ASPMissionObjective::CheckOccupants()
+{
+ if (bCompleted || !Director || static_cast<uint8>(AdvanceTo) != static_cast<uint8>(Director->CurrentScene) + 1) return;
+ TArray<AActor*> Occupants;
+ Trigger->GetOverlappingActors(Occupants, APawn::StaticClass());
+ for (AActor* Occupant : Occupants)
+ {
+  OnTrigger(Trigger, Occupant, nullptr, INDEX_NONE, false, FHitResult());
+  if (bCompleted) break;
+ }
 }
 void ASPMissionObjective::OnTrigger(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
