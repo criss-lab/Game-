@@ -7,6 +7,8 @@
 #include "GameFramework/Controller.h"
 #include "Engine/StaticMesh.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Engine/World.h"
+#include "CollisionShape.h"
 ASPDriveableHelicopter::ASPDriveableHelicopter()
 {
  PrimaryActorTick.bCanEverTick = true;
@@ -41,7 +43,14 @@ void ASPDriveableHelicopter::ExitHelicopterAuthority()
 {
  if (!HasAuthority() || !IsValid(PreviousPilotPawn) || !IsValid(PilotController) || PilotController->GetPawn()!=this) return;
  APawn* OldPawn=PreviousPilotPawn; AController* OldController=PilotController;
- OldController->Possess(OldPawn); OldPawn->SetActorLocation(GetActorLocation()+GetActorRotation().RotateVector(ExitOffset),false,nullptr,ETeleportType::TeleportPhysics);
+ const FVector DesiredExit = GetActorLocation() + GetActorRotation().RotateVector(ExitOffset);
+ if (!GetWorld()) return;
+ FCollisionQueryParams Params(SCENE_QUERY_STAT(SPHelicopterExit), false, this);
+ Params.AddIgnoredActor(OldPawn);
+ const bool bBlocked = GetWorld()->OverlapBlockingTestByChannel(DesiredExit, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeCapsule(42.f, 90.f), Params);
+ if (bBlocked) return;
+ if (!OldPawn->SetActorLocation(DesiredExit, true)) return;
+ OldController->Possess(OldPawn);
  OnPilotExited(OldPawn); PreviousPilotPawn=nullptr; PilotController=nullptr;
 }
 void ASPDriveableHelicopter::MoveForward(float V) { if (Controller && !FMath::IsNearlyZero(V)) { AddMovementInput(GetActorForwardVector(),V); if (!HasAuthority()) ServerMoveFlight(GetActorForwardVector(),V); } }
