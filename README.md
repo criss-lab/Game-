@@ -2,15 +2,14 @@
 
 Unreal Engine 5.5 C++ third-person action-thriller prototype. **Pre-alpha: source checks are not an Unreal compilation or a playable release.**
 
-## Android APK downloads
+## Android APK status — NOT BUILT
 
-**No verified downloadable APK exists yet.** The links below lead to the real build workflow and its runs; an APK download becomes available inside a successful run's **Artifacts** section after a UE5.5 Android-capable self-hosted runner packages the game.
+**There is currently NO APK to download, NO successful Android packaging run, and NO verified installable game.** Do not mistake a workflow source file or source-sanity check for a build artifact. The packaging YAML currently exists only on the `feature/sprint-001-foundation` branch; GitHub may not offer its manual Run workflow button until the workflow file is also present on the default branch. A Windows self-hosted runner with UE5.5 and Android SDK/NDK must be connected first.
 
-- [Build Android APK / view workflow](https://github.com/criss-lab/Game-/actions/workflows/android-apk.yml)
-- [View Android APK build runs](https://github.com/criss-lab/Game-/actions/workflows/android-apk.yml?query=branch%3Afeature%2Fsprint-001-foundation)
-- [Windows Unreal compilation workflow](https://github.com/criss-lab/Game-/actions/workflows/unreal-build.yml)
+- [Inspect Android packaging workflow source (not an APK)](https://github.com/criss-lab/Game-/blob/feature/sprint-001-foundation/.github/workflows/android-apk.yml)
+- [Inspect Windows compilation workflow source (not a compiled build)](https://github.com/criss-lab/Game-/blob/feature/sprint-001-foundation/.github/workflows/unreal-build.yml)
 
-To build: Actions → Android APK (UE5.5 self-hosted) → Run workflow → select `feature/sprint-001-foundation`. The runner needs labels `self-hosted`, `Windows`, `X64`, `unreal-5-5`, `android-sdk`, a working UE5.5 Android toolchain, `UE_ROOT`, and `ANDROID_HOME`. After a successful run, download **ShadowProtocol-Android-Development-APK** under Artifacts. This is a development build, not a signed production release; validate installation and gameplay on real devices before distribution. Artifacts expire after 14 days.
+After the workflow is made available on the default branch and the runner is connected: Actions → Android APK (UE5.5 self-hosted) → Run workflow → select `feature/sprint-001-foundation`. The runner needs labels `self-hosted`, `Windows`, `X64`, `unreal-5-5`, `android-sdk`, a working UE5.5 Android toolchain, `UE_ROOT`, and `ANDROID_HOME`. After a successful run, download **ShadowProtocol-Android-Development-APK** under Artifacts. This is a development build, not a signed production release; validate installation and gameplay on real devices before distribution. Artifacts expire after 14 days.
 
 ## Current foundation
 
