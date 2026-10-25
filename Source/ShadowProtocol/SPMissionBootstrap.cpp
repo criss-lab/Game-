@@ -9,6 +9,7 @@
 #include "SPEnvironmentZone.h"
 #include "SPWorldMachine.h"
 #include "Engine/World.h"
+#include "Components/BoxComponent.h"
 ASPMissionBootstrap::ASPMissionBootstrap()
 {
  PrimaryActorTick.bCanEverTick = false;
@@ -56,14 +57,15 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
  ASPWorldMachine* MissionConsole = nullptr;
  {
   const TSubclassOf<ASPWorldMachine> MachineType = WorldMachineClass ? WorldMachineClass : ASPWorldMachine::StaticClass();
-  const int32 SafeMachines = FMath::Clamp(MachineCount, 0, 12);
+  // The infiltration objective always requires a real console, even when designers set MachineCount to zero.
+  const int32 SafeMachines = FMath::Clamp(MachineCount, 1, 12);
   for (int32 Index = 0; Index < SafeMachines; ++Index)
   {
    const FVector Offset = MachineStart + FVector((Index / 3) * 500.f, (Index % 3) * 450.f, 0.f);
    ASPWorldMachine* Machine = GetWorld()->SpawnActor<ASPWorldMachine>(MachineType, GetActorTransform().TransformPosition(Offset), GetActorRotation());
    if (Machine)
    {
-    Machine->MachineType = MissionMachineTypes.IsValidIndex(Index) ? MissionMachineTypes[Index] : ESPWorldMachineType::SecurityConsole;
+    Machine->MachineType = Index == 0 ? ESPWorldMachineType::SecurityConsole : (MissionMachineTypes.IsValidIndex(Index) ? MissionMachineTypes[Index] : ESPWorldMachineType::SecurityConsole);
     if (!MissionConsole && Machine->MachineType == ESPWorldMachineType::SecurityConsole) MissionConsole = Machine;
    }
   }
@@ -107,7 +109,7 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
    if (Index == 0) { Stage->Requirement = ESPObjectiveRequirement::ActivateMachine; Stage->RequiredMachine = MissionConsole; }
    if (Index == 1) Stage->Requirement = ESPObjectiveRequirement::ClearEnemies;
    if (Index == 2) Stage->Requirement = ESPObjectiveRequirement::Reach;
-   if (Index == 3) Stage->Requirement = ESPObjectiveRequirement::EscapeInVehicle;
+   if (Index == 3) { Stage->Requirement = ESPObjectiveRequirement::EscapeInVehicle; Stage->Trigger->SetBoxExtent(FVector(550.f, 550.f, 450.f)); }
   }
  }
 }
