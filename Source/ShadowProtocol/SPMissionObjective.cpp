@@ -8,6 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
+#include "GameFramework/Pawn.h"
 ASPMissionObjective::ASPMissionObjective()
 {
  bReplicates = true;
