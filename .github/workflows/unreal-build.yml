@@ -1,0 +1,27 @@
+name: Unreal build (manual self-hosted)
+on:
+  workflow_dispatch:
+jobs:
+  windows-editor:
+    runs-on: [self-hosted, Windows, X64, unreal-5-5]
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Unreal installation
+        shell: pwsh
+        run: |
+          if (-not $env:UE_ROOT) { throw 'UE_ROOT must point to Unreal Engine 5.5 installation' }
+          $ubt = Join-Path $env:UE_ROOT 'Engine/Build/BatchFiles/Build.bat'
+          if (-not (Test-Path $ubt)) { throw "Build.bat not found: $ubt" }
+      - name: Compile ShadowProtocolEditor
+        shell: pwsh
+        run: |
+          $ubt = Join-Path $env:UE_ROOT 'Engine/Build/BatchFiles/Build.bat'
+          & $ubt ShadowProtocolEditor Win64 Development "-Project=$PWD/ShadowProtocol.uproject" -WaitMutex -NoHotReloadFromIDE
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Run play-mode automation test
+        shell: pwsh
+        run: |
+          $editor = Join-Path $env:UE_ROOT 'Engine/Binaries/Win64/UnrealEditor-Cmd.exe'
+          & $editor "$PWD/ShadowProtocol.uproject" -unattended -nop4 -nullrhi -ExecCmds="Automation RunTests ShadowProtocol.PlayMode.Validation; Quit" -TestExit="Automation Test Queue Empty" -log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

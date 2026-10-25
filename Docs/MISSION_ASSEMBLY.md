@@ -1,0 +1,7 @@
+# Mission 001 integration: actor-driven graybox
+
+Added ASPMissionBootstrap as a server-only one-shot scene assembler. Place it in an Unreal Editor level and set StreetClass, EnemyClass, VehicleClass and ObjectiveClass to Blueprint subclasses. It spawns a scene director, instances street pieces, creates up to 12 enemy pawns and AI controllers, spawns a configured Chaos vehicle, and positions the first objective. Empty class slots intentionally skip that part of the level.
+
+Prerequisites: an actual level with PlayerStart, collision floor, lighting, NavMeshBoundsVolume, art meshes and configured Chaos vehicle Blueprint. Assign 100 cm reference meshes to the Street Blueprint components, then check scaling. Give enemy Blueprint a skeletal mesh, capsule, animation and AI navigation support. The vehicle Blueprint needs a skeletal mesh, wheels, physics asset, movement configuration and driving controls before it can move. Spawn position is not a validated safe vehicle spawn. Add an SPGameMode override. Use the editor to author additional mission objectives in sequence; the bootstrap only places the first one.
+
+Testing: verify one-shot spawn, no duplicate actors, navmesh coverage, 3 AI enemies approaching the player, melee health damage, first objective transition, vehicle physics and client replication. Do not use this bootstrap in competitive matches: its AI targeting and objectives are a single-player prototype. No .umap or 3D asset binaries have been authored or compiled by this connector.

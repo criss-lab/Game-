@@ -13,6 +13,7 @@ public:
  UPROPERTY(ReplicatedUsing=OnRep_Health, BlueprintReadOnly, Category="Combat") float Health = 100.f;
  UPROPERTY(BlueprintAssignable, Category="Combat") FSPHealthChanged OnHealthChanged;
  UFUNCTION(BlueprintPure, Category="Combat") bool IsAlive() const { return Health > 0.f; }
+ UFUNCTION(BlueprintCallable, Category="Combat") float RestoreHealth(float Amount);
  virtual void BeginPlay() override;
  virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:

@@ -1,0 +1,37 @@
+name: Android APK (UE5.5 self-hosted)
+on:
+  workflow_dispatch:
+jobs:
+  package-android:
+    runs-on: [self-hosted, Windows, X64, unreal-5-5, android-sdk]
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Android and Unreal toolchains
+        shell: pwsh
+        run: |
+          if (-not $env:UE_ROOT) { throw 'UE_ROOT must point to Unreal Engine 5.5' }
+          if (-not $env:ANDROID_HOME) { throw 'ANDROID_HOME must point to the Android SDK' }
+          $uat = Join-Path $env:UE_ROOT 'Engine/Build/BatchFiles/RunUAT.bat'
+          if (-not (Test-Path $uat)) { throw "Missing RunUAT.bat: $uat" }
+          if (-not (Test-Path $env:ANDROID_HOME)) { throw "Missing Android SDK: $env:ANDROID_HOME" }
+      - name: Package Android Development APK
+        shell: pwsh
+        run: |
+          $uat = Join-Path $env:UE_ROOT 'Engine/Build/BatchFiles/RunUAT.bat'
+          $project = Join-Path $PWD 'ShadowProtocol.uproject'
+          $archive = Join-Path $PWD 'AndroidPackage'
+          & $uat BuildCookRun "-project=$project" -noP4 -platform=Android -clientconfig=Development -build -cook -stage -pak -package -archive "-archivedirectory=$archive" -utf8output
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $apks = @(Get-ChildItem -Path $archive -Filter '*.apk' -Recurse -File)
+          if ($apks.Count -eq 0) { throw 'Packaging reported success but no APK was produced' }
+          $apks | ForEach-Object { Write-Host "APK: $($_.FullName) SHA256: $((Get-FileHash $_.FullName -Algorithm SHA256).Hash)" }
+      - name: Upload development APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ShadowProtocol-Android-Development-APK
+          path: AndroidPackage/**/*.apk
+          if-no-files-found: error
+          retention-days: 14

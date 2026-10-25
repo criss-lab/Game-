@@ -9,7 +9,11 @@ void ASPSceneDirector::AdvanceScene(ESPScene NextScene)
  OnRep_Scene();
  ForceNetUpdate();
 }
-void ASPSceneDirector::OnRep_Scene() { SceneChanged(CurrentScene); }
+void ASPSceneDirector::OnRep_Scene()
+{
+ SceneChanged(CurrentScene);
+ OnSceneChangedNative.Broadcast(CurrentScene);
+}
 void ASPSceneDirector::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
  Super::GetLifetimeReplicatedProps(OutLifetimeProps);
