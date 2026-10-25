@@ -73,13 +73,13 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
   ASPStreetBlock* Street = GetWorld()->SpawnActor<ASPStreetBlock>(StreetClass, GetActorLocation()+StreetOffset, GetActorRotation());
   if (Street) Street->RebuildBlock();
  }
- if (EnemyClass)
  {
+  const TSubclassOf<ASPCombatCharacter> BotType = EnemyClass ? EnemyClass : ASPCombatCharacter::StaticClass();
   const int32 SafeCount = FMath::Clamp(EnemyCount, 0, 12);
   for (int32 Index = 0; Index < SafeCount; ++Index)
   {
    const FVector Position = GetActorTransform().TransformPosition(EnemyStart + FVector(Index*180.f, (Index%2)*260.f, 0.f));
-   ASPCombatCharacter* Enemy = GetWorld()->SpawnActor<ASPCombatCharacter>(EnemyClass, Position, GetActorRotation());
+   ASPCombatCharacter* Enemy = GetWorld()->SpawnActor<ASPCombatCharacter>(BotType, Position, GetActorRotation());
    if (Enemy)
    {
     Enemy->BotTeam = ESPTeam::Thieves;
