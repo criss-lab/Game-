@@ -29,6 +29,16 @@ jobs:
           if ($apks.Count -eq 0) { throw 'Packaging reported success but no APK was produced' }
           $apks | ForEach-Object { Write-Host "APK: $($_.FullName) SHA256: $((Get-FileHash $_.FullName -Algorithm SHA256).Hash)" }
           $apks | ForEach-Object { "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(), $_.Name } | Set-Content -Path (Join-Path $archive 'SHA256SUMS.txt')
+      - name: Upload Android packaging logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ShadowProtocol-Android-Packaging-Logs
+          path: |
+            Saved/Logs/*.log
+            Engine/Programs/AutomationTool/Saved/Logs/*.txt
+          if-no-files-found: warn
+          retention-days: 14
       - name: Upload development APK
         uses: actions/upload-artifact@v4
         with:
