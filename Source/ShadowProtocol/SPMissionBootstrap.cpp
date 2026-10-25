@@ -100,7 +100,7 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
   const FVector Positions[] = { MachineStart + FVector(0.f, 0.f, 120.f), EnemyStart + FVector(300.f, 0.f, 120.f), EnemyStart + FVector(850.f, 0.f, 120.f), VehiclePosition + FVector(1800.f, 0.f, 0.f) };
   for (int32 Index = 0; Index < 4; ++Index)
   {
-   ASPMissionObjective* Stage = GetWorld()->SpawnActor<ASPMissionObjective>(ObjectiveClass, Origin.TransformPosition(Positions[Index]), GetActorRotation());
+   ASPMissionObjective* Stage = GetWorld()->SpawnActor<ASPMissionObjective>(StageType, Origin.TransformPosition(Positions[Index]), GetActorRotation());
    if (!Stage) continue;
    Stage->Director = Director;
    Stage->AdvanceTo = Stages[Index];
