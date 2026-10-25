@@ -53,6 +53,7 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
    Zone->BuildEnvironment();
   }
  }
+ ASPWorldMachine* MissionConsole = nullptr;
  if (WorldMachineClass)
  {
   const int32 SafeMachines = FMath::Clamp(MachineCount, 0, 12);
@@ -60,7 +61,11 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
   {
    const FVector Offset = MachineStart + FVector((Index / 3) * 500.f, (Index % 3) * 450.f, 0.f);
    ASPWorldMachine* Machine = GetWorld()->SpawnActor<ASPWorldMachine>(WorldMachineClass, GetActorTransform().TransformPosition(Offset), GetActorRotation());
-   if (Machine) Machine->MachineType = MissionMachineTypes.IsValidIndex(Index) ? MissionMachineTypes[Index] : ESPWorldMachineType::SecurityConsole;
+   if (Machine)
+   {
+    Machine->MachineType = MissionMachineTypes.IsValidIndex(Index) ? MissionMachineTypes[Index] : ESPWorldMachineType::SecurityConsole;
+    if (!MissionConsole && Machine->MachineType == ESPWorldMachineType::SecurityConsole) MissionConsole = Machine;
+   }
   }
  }
  if (StreetClass)
@@ -90,5 +95,17 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
  {
   ASPMissionObjective* Objective = GetWorld()->SpawnActor<ASPMissionObjective>(ObjectiveClass, GetActorTransform().TransformPosition(FirstObjectivePosition), GetActorRotation());
   if (Objective) { Objective->Director = Director; Objective->AdvanceTo = ESPScene::Infiltration; }
+  const ESPScene Stages[] = { ESPScene::Ambush, ESPScene::BossFight, ESPScene::VehicleEscape, ESPScene::Debrief };
+  const FVector Positions[] = { MachineStart + FVector(0.f, 0.f, 120.f), EnemyStart + FVector(300.f, 0.f, 120.f), EnemyStart + FVector(850.f, 0.f, 120.f), VehiclePosition + FVector(1800.f, 0.f, 0.f) };
+  for (int32 Index = 0; Index < 4; ++Index)
+  {
+   ASPMissionObjective* Stage = GetWorld()->SpawnActor<ASPMissionObjective>(ObjectiveClass, Origin.TransformPosition(Positions[Index]), GetActorRotation());
+   if (!Stage) continue;
+   Stage->Director = Director;
+   Stage->AdvanceTo = Stages[Index];
+   if (Index == 0) { Stage->Requirement = ESPObjectiveRequirement::ActivateMachine; Stage->RequiredMachine = MissionConsole; }
+   if (Index == 1 || Index == 2) Stage->Requirement = ESPObjectiveRequirement::ClearEnemies;
+   if (Index == 3) Stage->Requirement = ESPObjectiveRequirement::EscapeInVehicle;
+  }
  }
 }
