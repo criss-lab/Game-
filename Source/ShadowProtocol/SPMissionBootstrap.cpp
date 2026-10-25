@@ -54,13 +54,13 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
   }
  }
  ASPWorldMachine* MissionConsole = nullptr;
- if (WorldMachineClass)
  {
+  const TSubclassOf<ASPWorldMachine> MachineType = WorldMachineClass ? WorldMachineClass : ASPWorldMachine::StaticClass();
   const int32 SafeMachines = FMath::Clamp(MachineCount, 0, 12);
   for (int32 Index = 0; Index < SafeMachines; ++Index)
   {
    const FVector Offset = MachineStart + FVector((Index / 3) * 500.f, (Index % 3) * 450.f, 0.f);
-   ASPWorldMachine* Machine = GetWorld()->SpawnActor<ASPWorldMachine>(WorldMachineClass, GetActorTransform().TransformPosition(Offset), GetActorRotation());
+   ASPWorldMachine* Machine = GetWorld()->SpawnActor<ASPWorldMachine>(MachineType, GetActorTransform().TransformPosition(Offset), GetActorRotation());
    if (Machine)
    {
     Machine->MachineType = MissionMachineTypes.IsValidIndex(Index) ? MissionMachineTypes[Index] : ESPWorldMachineType::SecurityConsole;
@@ -91,9 +91,10 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
  }
  if (VehicleClass) GetWorld()->SpawnActor<ASPDriveableVehicle>(VehicleClass, GetActorTransform().TransformPosition(VehiclePosition), GetActorRotation());
  if (HelicopterClass) GetWorld()->SpawnActor<ASPDriveableHelicopter>(HelicopterClass, GetActorTransform().TransformPosition(HelicopterPosition), GetActorRotation());
- if (ObjectiveClass && Director)
+ if (Director)
  {
-  ASPMissionObjective* Objective = GetWorld()->SpawnActor<ASPMissionObjective>(ObjectiveClass, GetActorTransform().TransformPosition(FirstObjectivePosition), GetActorRotation());
+  const TSubclassOf<ASPMissionObjective> StageType = ObjectiveClass ? ObjectiveClass : ASPMissionObjective::StaticClass();
+  ASPMissionObjective* Objective = GetWorld()->SpawnActor<ASPMissionObjective>(StageType, GetActorTransform().TransformPosition(FirstObjectivePosition), GetActorRotation());
   if (Objective) { Objective->Director = Director; Objective->AdvanceTo = ESPScene::Infiltration; }
   const ESPScene Stages[] = { ESPScene::Ambush, ESPScene::BossFight, ESPScene::VehicleEscape, ESPScene::Debrief };
   const FVector Positions[] = { MachineStart + FVector(0.f, 0.f, 120.f), EnemyStart + FVector(300.f, 0.f, 120.f), EnemyStart + FVector(850.f, 0.f, 120.f), VehiclePosition + FVector(1800.f, 0.f, 0.f) };
