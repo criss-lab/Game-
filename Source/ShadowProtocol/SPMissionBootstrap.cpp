@@ -90,14 +90,14 @@ void ASPMissionBootstrap::SpawnGrayboxMission()
   }
  }
  if (VehicleClass) GetWorld()->SpawnActor<ASPDriveableVehicle>(VehicleClass, GetActorTransform().TransformPosition(VehiclePosition), GetActorRotation());
- if (HelicopterClass) GetWorld()->SpawnActor<ASPDriveableHelicopter>(HelicopterClass, GetActorTransform().TransformPosition(HelicopterPosition), GetActorRotation());
+ GetWorld()->SpawnActor<ASPDriveableHelicopter>(HelicopterClass ? HelicopterClass : ASPDriveableHelicopter::StaticClass(), GetActorTransform().TransformPosition(HelicopterPosition), GetActorRotation());
  if (Director)
  {
   const TSubclassOf<ASPMissionObjective> StageType = ObjectiveClass ? ObjectiveClass : ASPMissionObjective::StaticClass();
   ASPMissionObjective* Objective = GetWorld()->SpawnActor<ASPMissionObjective>(StageType, GetActorTransform().TransformPosition(FirstObjectivePosition), GetActorRotation());
   if (Objective) { Objective->Director = Director; Objective->AdvanceTo = ESPScene::Infiltration; }
   const ESPScene Stages[] = { ESPScene::Ambush, ESPScene::BossFight, ESPScene::VehicleEscape, ESPScene::Debrief };
-  const FVector Positions[] = { MachineStart + FVector(0.f, 0.f, 120.f), EnemyStart + FVector(300.f, 0.f, 120.f), EnemyStart + FVector(850.f, 0.f, 120.f), VehiclePosition + FVector(1800.f, 0.f, 0.f) };
+  const FVector Positions[] = { MachineStart + FVector(0.f, 0.f, 120.f), EnemyStart + FVector(300.f, 0.f, 120.f), EnemyStart + FVector(850.f, 0.f, 120.f), HelicopterPosition + FVector(300.f, 0.f, 0.f) };
   for (int32 Index = 0; Index < 4; ++Index)
   {
    ASPMissionObjective* Stage = GetWorld()->SpawnActor<ASPMissionObjective>(StageType, Origin.TransformPosition(Positions[Index]), GetActorRotation());
